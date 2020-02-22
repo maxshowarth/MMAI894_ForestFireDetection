@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import xmltodict
 
 os.chdir(os.path.dirname("/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/"))
-codeCacheDir = os.path.dirname("/code_cache/")
+codeCacheDir = os.path.dirname("code_cache/")
 cloudDir = os.path.dirname("sorted_images/cloud/")
 fireDir = os.path.dirname("sorted_images/fire/")
 smokeDir = os.path.dirname("sorted_images/smoke/")
@@ -115,7 +115,7 @@ for tile in unsortedTiles:
             tileInfo_df.loc[tileInfo_df["tileName"] == tile, "newPath"] = newPath
             print(movePath)
 
-pk.dump(tileInfo_df, open(os.path.join(codeCacheDir,"tile_info_sorted_Pickle"), "wb") )
+pk.dump(tileInfo_df, open(os.path.join(codeCacheDir,"tile_info_sorted_Pickle"), "wb"))
 
 
 
