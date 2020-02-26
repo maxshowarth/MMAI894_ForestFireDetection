@@ -84,10 +84,11 @@ for tile in unsortedTiles:
     #                                                 (boundingBoxesHolder["ymax"]>thisTileInfo["ymax"])]
 
     # First step is determine which bounding boxes DO NOT overlap tiles
-    overlappingBoundingBoxes = boundingBoxesHolder[(boundingBoxesHolder["xmin"]>thisTileInfo["xmax"])| # Check if bounding box is below tile
-                                                   (boundingBoxesHolder["xmax"]<thisTileInfo["xmin"])| # Check if bounding box is above tile
-                                                   (boundingBoxesHolder["ymin"]>thisTileInfo["ymax"])| # Check if bounding box is right of tile
-                                                   (boundingBoxesHolder["ymax"]<thisTileInfo["ymin"])] # Check if bounding box is left of tile
+    tileOverlapFactor = tileSize//3
+    overlappingBoundingBoxes = boundingBoxesHolder[(boundingBoxesHolder["xmin"]>(thisTileInfo["xmax"]-tileOverlapFactor))| # Check if bounding box is right tile
+                                                   (boundingBoxesHolder["xmax"]<(thisTileInfo["xmin"]+tileOverlapFactor))| # Check if bounding box is left tile
+                                                   (boundingBoxesHolder["ymin"]>(thisTileInfo["ymax"]-tileOverlapFactor))| # Check if bounding box is below of tile
+                                                   (boundingBoxesHolder["ymax"]<(thisTileInfo["ymin"]+tileOverlapFactor))] # Check if bounding box is above of tile
     print("{} bounding boxes DO NOT overlap out of {} boxes in this source image".format(len(overlappingBoundingBoxes), len(boundingBoxesHolder)))
     # Remove bounding boxes that do not overlap tiles
     overlappingBoundingBoxes = pd.concat([boundingBoxesHolder,overlappingBoundingBoxes]).drop_duplicates(keep=False)

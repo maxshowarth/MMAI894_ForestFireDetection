@@ -85,6 +85,7 @@ def imageSplit(imageDir, imageName, tileSize):
             chunkCoords.append([x1, y1, x2, y2])
 
     # Generate Tiles
+
     for tile in chunkCoords:
         cropped = ready_image.crop((tile[0], tile[1], tile[2], tile[3]))
         filename = "{}-{}-{}-{}-{}.png".format(imageName, tile[0], tile[1], tile[2], tile[3])
