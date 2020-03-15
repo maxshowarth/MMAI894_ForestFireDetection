@@ -27,8 +27,8 @@ def imageSplit(imageDir, imageName, tileSize):
 
     # Convert image to PNG for processing
     baseImage = Image.open(imagePath)
-    baseImage.save(os.path.join(codeCacheDir, "baseImage_PNG"), "PNG") #/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/code_cache/baseImgae_PNG", "PNG")
-    baseImage = io.imread(os.path.join(codeCacheDir, "baseImage_PNG"))
+    baseImage.save(os.path.join(codeCacheDir, "baseImage_PNG.png"), "PNG") #/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/code_cache/baseImgae_PNG", "PNG")
+    baseImage = io.imread(os.path.join(codeCacheDir, "baseImage_PNG.png"))
     conversionTime = datetime.now() - startTime
     print("\t\t\t Conversion completed in {} seconds".format(conversionTime.seconds))
 
@@ -43,11 +43,12 @@ def imageSplit(imageDir, imageName, tileSize):
     # Find and crop grey edges
     img = cv2.imread(os.path.join(codeCacheDir,"baseImgae_PNG_rotated.png"))
     grayscale = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, threshold = cv2.threshold(grayscale, 1, 255, cv2.THRESH_BINARY)
+    _, threshold = cv2.threshold(grayscale, 0, 255, cv2.THRESH_BINARY)
     contours, hierarchy = cv2.findContours(threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     count = contours[0]
     x, y, w, h = cv2.boundingRect(count)
     cropped = img[y:y + h, x:x + w]
+    cv2.imwrite(os.path.join(codeCacheDir, "grayscale_check.png"), grayscale)
     cv2.imwrite(os.path.join(codeCacheDir,"baseImage_rotate_borderless.png"), cropped)
     borderRemovalTime = datetime.now() - startTime + rotateTime
     print("\t\t\t Border removal completed in {} seconds".format(borderRemovalTime.seconds))

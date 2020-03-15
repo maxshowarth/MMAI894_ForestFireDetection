@@ -66,10 +66,10 @@ boundingBoxes['xmin'] = boundingBoxes['xmin'].astype(int)
 boundingBoxes['ymin'] = boundingBoxes['ymin'].astype(int)
 boundingBoxes['xmax'] = boundingBoxes['xmax'].astype(int)
 boundingBoxes['ymax'] = boundingBoxes['ymax'].astype(int)
-tileInfo_df['xmin'] = tileInfo_df['xmin'].astype(int)
-tileInfo_df['ymin'] = tileInfo_df['ymin'].astype(int)
-tileInfo_df['xmax'] = tileInfo_df['xmax'].astype(int)
-tileInfo_df['ymax'] = tileInfo_df['ymax'].astype(int)
+# tileInfo_df['xmin'] = tileInfo_df['xmin'].astype(int)
+# tileInfo_df['ymin'] = tileInfo_df['ymin'].astype(int)
+# tileInfo_df['xmax'] = tileInfo_df['xmax'].astype(int)
+# tileInfo_df['ymax'] = tileInfo_df['ymax'].astype(int)
 
 
 # Start comparing uncatalogued tiles to bounding boxes
@@ -85,10 +85,10 @@ for tile in unsortedTiles:
 
     # First step is determine which bounding boxes DO NOT overlap tiles
     tileOverlapFactor = tileSize//3
-    overlappingBoundingBoxes = boundingBoxesHolder[(boundingBoxesHolder["xmin"]>(thisTileInfo["xmax"]-tileOverlapFactor))| # Check if bounding box is right tile
-                                                   (boundingBoxesHolder["xmax"]<(thisTileInfo["xmin"]+tileOverlapFactor))| # Check if bounding box is left tile
-                                                   (boundingBoxesHolder["ymin"]>(thisTileInfo["ymax"]-tileOverlapFactor))| # Check if bounding box is below of tile
-                                                   (boundingBoxesHolder["ymax"]<(thisTileInfo["ymin"]+tileOverlapFactor))] # Check if bounding box is above of tile
+    overlappingBoundingBoxes = boundingBoxesHolder[(boundingBoxesHolder["xmin"]>(int(thisTileInfo["xmax"])-tileOverlapFactor))| # Check if bounding box is right tile
+                                                   (boundingBoxesHolder["xmax"]<(int(thisTileInfo["xmin"])+tileOverlapFactor))| # Check if bounding box is left tile
+                                                   (boundingBoxesHolder["ymin"]>(int(thisTileInfo["ymax"])-tileOverlapFactor))| # Check if bounding box is below of tile
+                                                   (boundingBoxesHolder["ymax"]<(int(thisTileInfo["ymin"])+tileOverlapFactor))] # Check if bounding box is above of tile
     print("{} bounding boxes DO NOT overlap out of {} boxes in this source image".format(len(overlappingBoundingBoxes), len(boundingBoxesHolder)))
     # Remove bounding boxes that do not overlap tiles
     overlappingBoundingBoxes = pd.concat([boundingBoxesHolder,overlappingBoundingBoxes]).drop_duplicates(keep=False)
