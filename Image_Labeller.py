@@ -44,6 +44,8 @@ for file in os.listdir(annotationsDir):
         with open(filePath) as f_xml:
             f = xmltodict.parse(f_xml.read())
             filename = f["annotation"]['filename']
+            if len(f['annotation']['object']) < 1:
+                continue
             for row in f['annotation']['object']:
                 rowIndex = len(boundingBoxes)+1
                 boundingBoxes.loc[rowIndex]  = [filename, row['name'], row['bndbox']["xmin"], row['bndbox']["ymin"], row['bndbox']["xmax"], row['bndbox']['ymax']]
