@@ -1,0 +1,27 @@
+<annotation>
+    <folder>processedImages</folder>
+    <filename>LC81050792019359LGN00_Visual.tif_prc.tif</filename>
+    <size>
+        <width>6530</width>
+        <height>6413</height>
+        <depth>3</depth>
+    </size>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>1414</xmin>
+            <ymin>1447</ymin>
+            <xmax>1482</xmax>
+            <ymax>1516</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>2073</xmin>
+            <ymin>3161</ymin>
+            <xmax>2143</xmax>
+            <ymax>3279</ymax>
+        </bndbox>
+    </object>
+</annotation>

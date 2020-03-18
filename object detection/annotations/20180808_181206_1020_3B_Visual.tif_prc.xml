@@ -1,0 +1,27 @@
+<annotation>
+    <folder>processedImages</folder>
+    <filename>20180808_181206_1020_3B_Visual.tif_prc.tif</filename>
+    <size>
+        <width>1406</width>
+        <height>4315</height>
+        <depth>3</depth>
+    </size>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>862</xmin>
+            <ymin>3331</ymin>
+            <xmax>1032</xmax>
+            <ymax>3453</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>799</xmin>
+            <ymin>3151</ymin>
+            <xmax>968</xmax>
+            <ymax>3326</ymax>
+        </bndbox>
+    </object>
+</annotation>

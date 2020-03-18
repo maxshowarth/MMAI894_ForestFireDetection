@@ -1,0 +1,36 @@
+<annotation>
+    <folder>processedImages</folder>
+    <filename>20191219_000734_0e20_3B_Visual.tif_prc.tif</filename>
+    <size>
+        <width>4314</width>
+        <height>1417</height>
+        <depth>3</depth>
+    </size>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>1847</xmin>
+            <ymin>1356</ymin>
+            <xmax>1916</xmax>
+            <ymax>1396</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>1514</xmin>
+            <ymin>657</ymin>
+            <xmax>1596</xmax>
+            <ymax>728</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>fire</name>
+        <bndbox>
+            <xmin>1308</xmin>
+            <ymin>659</ymin>
+            <xmax>1395</xmax>
+            <ymax>737</ymax>
+        </bndbox>
+    </object>
+</annotation>
