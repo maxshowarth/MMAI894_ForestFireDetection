@@ -58,8 +58,47 @@ if image_zip_name in bucket_files:
         print("final_sorted_images.zip downloaded")
 
 # Unzip final_sorted_images.zip
-with ZipFile(image_zip_local_path, 'r') as zipObj:
-    zipObj.extractall()
+if os.path.isdir("./model_cache/sorted_images/"):
+    print("Images unzipped")
+    pass
+else:
+    with ZipFile(image_zip_local_path, 'r') as zipObj:
+        zipObj.extractall(path="./model_cache/")
+
+# Collect images and load into memory
+fire_image_dir = "./model_cache/sorted_images/fire"
+normal_image_dir = "./model_cache/sorted_images/selected_normal"
+
+training_data = []
+
+# Label convention: fire = 1 , normal = 0
+
+for image in os.listdir(fire_image_dir):
+    label = 1
+    path = os.path.join(fire_image_dir, image)
+    image = cv2.imread(path, cv2.IMREAD_COLOR)
+    if image is not None:
+        image = cv2.resize(image, (224, 224))
+        training_data.append([np.array(image), label])
+    else:
+        pass
+    shuffle(training_data)
+print("Fire images loaded")
+
+for image in os.listdir(normal_image_dir):
+    label = 0
+    path = os.path.join(normal_image_dir, image)
+    image = cv2.imread(path, cv2.IMREAD_COLOR)
+    if image is not None:
+        image = cv2.resize(image, (224, 224))
+        training_data.append([np.array(image), label])
+    else:
+        "image_passed"
+        pass
+    shuffle(training_data)
+print("Normal images loaded")
+np.save('./model_cache/unaugmented_training_data.npy', training_data)
+print("Data saved")
 
 
 print("done")
