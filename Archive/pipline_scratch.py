@@ -6,9 +6,9 @@ from Image_Splitter import imageSplit
 import pickle
 
 masterDir = os.path.dirname("//")
-rawImageDir = os.path.dirname("visual_images_and_metadata/")
-codeCacheDir = os.path.dirname("code_cache/")
-tileCacheDir = os.path.dirname("code_cache/tiles/")
+rawImageDir = os.path.dirname("../visual_images_and_metadata/")
+codeCacheDir = os.path.dirname("../code_cache/")
+tileCacheDir = os.path.dirname("../code_cache/tiles/")
 baseImagePath = "/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/visual_images_and_metadata/LC80890822019310LGN00_Visual.tif"
 
 tileSize = 234

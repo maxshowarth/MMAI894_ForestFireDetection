@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import cv2
 print(os.getcwd())
-os.chdir(os.path.dirname("/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/"))
+os.chdir(os.path.dirname("//"))
 print(os.getcwd())
 smokeDir = os.path.dirname("/sorted_images/smoke/")
 unsureDir = os.path.dirname("/sorted_images/unsure/")
