@@ -49,9 +49,8 @@ def display_confusion_matrix(true_labels, predicted_labels, classes=[1,0]):
 
     cm = metrics.confusion_matrix(y_true=true_labels, y_pred=predicted_labels, 
                                   labels=classes)
-    cm_frame = metrics.plot_confusion_matrix(y_true=true_labels, y_pred=predicted_labels, 
-                                             labels=classes)
-    print(cm_frame) 
+
+    print(cm) 
     
 def display_classification_report(true_labels, predicted_labels, classes=[1,0]):
 
