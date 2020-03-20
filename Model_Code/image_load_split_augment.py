@@ -195,21 +195,6 @@ def augmentImages(augmentation_generator):
             augmented_images.append(batch[0])
     return(augmented_images)
 
-# Create iteratble list of augmentators
-# augmentation_generators = [zoom_augmentation, rotation_augmentation, widthShift_augmentation, heightShift_augmentation,shear_augmentation,horizaontalFlip_augmentation, verticalFlip_augmentation, full_augmentation ]
-
-# Do augmentation
-# zoomed_images = augmentImages(zoom_augmentation)
-# rotation_images = augmentImages(rotation_augmentation)
-# widthShift_images = augmentImages(widthShift_augmentation)
-# heightShift_images = augmentImages(heightShift_augmentation)
-# shear_images = augmentImages(shear_augmentation)
-# horizontalFlip_images = augmentImages(horizaontalFlip_augmentation)
-# verticalFlip_images = augmentImages(verticalFlip_augmentation)
-# fullyAugmented_images = augmentImages(full_augmentation)
-# print("done")
-# showNumpyImage(fullyAugmented_images[1])
-
 # Package augmented images as training sets and send to cloud
 augmentorCache = "./model_cache/augemntor_cache"
 if os.path.isdir("./model_cache/augemntor_cache"):
@@ -218,7 +203,6 @@ else:
     os.mkdir(augmentorCache)
     print("Augmentor cache created")
 
-# for augmentor in augmentors.items():
 def augmentAndUpload(augmentor):
     name, IGD = augmentor
     print("")
@@ -243,27 +227,7 @@ for augmentor in augmentors.items():
     augmentAndUpload(augmentor)
 
 
-# def packageAndUpload(augmentedImages, augmentation_name):
-#     train_x_aug = np.concatenate((train_x_scaled), np.array(augmentedImages))
-#     aug_labels = []
-#     for i in range(len(augmentImages())):
-#         aug_labels.append(1)
-#     train_y_aug = np.concatenate((train_y, np.array(aug_labels)))
-#     training_pack = [train_x_aug, train_y_aug]
-#     filePath = os.path.join("./model_cache/", "{}.pkl".format(str(augmentation_name)))
-#     f = open(filePath, 'wb')
-#     pk.dump(training_pack, f)
-#     f.close()
-#     # upload_blob(bucket_name,filePath, augmentation_name)
 
-# packageAndUpload(zoomed_images, "zoomed_images")
-# packageAndUpload(rotation_images, "rotation_images")
-# packageAndUpload(widthShift_images, "widthShift_images")
-# packageAndUpload(heightShift_images, "heightShift_images")
-# packageAndUpload(shear_images, "shear_images")
-# packageAndUpload(horizontalFlip_images, "horizontalFlip_images")
-# packageAndUpload(verticalFlip_images, "verticalFlip_images")
-# packageAndUpload(fullyAugmented_images, "fullyAugmented_images")
 
 
 
