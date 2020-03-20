@@ -78,6 +78,9 @@ else:
 bucket_files = [blob.name for blob in storage_client.list_blobs(bucket_name)]
 
 # Get available training sets from cloud and download
+### NOTE: All training sets are being downloaded and used. If you only want to train on the fully augmented set uncomment the line below
+# bucket_files = bucket_files['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
+
 training_sets = defaultdict(list)
 for set in bucket_files:
     if "training_sets" in set:
@@ -92,6 +95,7 @@ for set in bucket_files:
 
 
 # Base VGG16 Model No Retraining, Imagenet Weights
+### NOTE: This is where you should insert your model code
 print("")
 print("Beginning base VGG16 Training")
 input_shape = (224, 224, 3)
@@ -116,12 +120,13 @@ model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-5),
               metrics=['accuracy'])
 
-# Save base model weights
+# Save base model weights so the model can be reset after each training
 baseWeights = model.get_weights()
 # Loop and train using each training set
+### NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
 for training_set in training_sets:
     print("     Starting training for set {}".format(str(training_set)))
-    model.set_weights(baseWeights)
+    model.set_weights(baseWeights) # Resets model
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][1]))
     history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
@@ -130,6 +135,8 @@ for training_set in training_sets:
 
 
 # Vase VGG16 Model Retrain Block 4 and 5, Imagenet Weights
+### NOTE: This is where you should insert your model code
+
 print("")
 print("Beginning retrainable VGG16 Training")
 
@@ -166,9 +173,10 @@ model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-5),
               metrics=['accuracy'])
 
+### NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
 for training_set in training_sets:
     print("     Starting training for set {}".format(str(training_set)))
-    model.set_weights(baseWeights)
+    model.set_weights(baseWeights) # Resets model
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_set[0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_set[1]))
     history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
