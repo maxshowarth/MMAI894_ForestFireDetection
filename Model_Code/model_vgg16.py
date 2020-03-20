@@ -124,7 +124,7 @@ for training_set in training_sets:
     model.set_weights(baseWeights)
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][1]))
-    history = model.fit(train_x_scaled, train_y, batch_size=32, epochs=10, verbose=1)
+    history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
     model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
     upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
 
@@ -171,7 +171,7 @@ for training_set in training_sets:
     model.set_weights(baseWeights)
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_set[0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_set[1]))
-    history = model.fit(train_x_scaled, train_y, batch_size=32, epochs=10, verbose=1)
+    history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
     model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
     upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_block4and5_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
 
