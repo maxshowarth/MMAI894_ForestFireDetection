@@ -79,7 +79,7 @@ bucket_files = [blob.name for blob in storage_client.list_blobs(bucket_name)]
 
 # Get available training sets from cloud and download
 ### NOTE: All training sets are being downloaded and used. If you only want to train on the fully augmented set uncomment the line below
-# bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
+bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
 
 training_sets = defaultdict(list)
 for set in bucket_files:
