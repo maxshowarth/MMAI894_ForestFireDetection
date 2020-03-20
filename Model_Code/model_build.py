@@ -1,39 +1,28 @@
 import keras
-import matplotlib.pyplot as plt
-import model_evaluation_utils as meu
-import numpy as np
-import pandas as pd
 import tensorflow as tf
 import time
 from PIL import Image
 from keras import optimizers
 from keras.applications import mobilenet_v2, nasnet
-from keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
-from keras.callbacks import ReduceLROnPlateau
-from keras.layers import Conv2D, Dropout, Dense, Flatten, MaxPooling2D
-from keras.models import Model, Sequential, load_model
+from keras.layers import Dropout, Dense
+from keras.models import Model, Sequential
 
 
-def build_mobilenetv2(weights='imagenet', fine_tune=['block_14_expand', 'block_15_expand', 'block_16_expand']):
+def set_trainable(model, fine_tune):
     """
-    Builds and compiles the MobileNetV2 model using pre-trained weights and custom classification head.
-
-    :param weights: Pre-trained weights to be used
-    :param fine_tune: First layer of each block to be fine-tuned
-    :return: The compiled model
+    Configure model layers to be trainable and freeze remainder of weights.
+    :param model: Model to be configured
+    :param fine_tune: Layers to be trained
+    :return: Configured model
     """
-    input_shape = (224, 224, 3)
-
-    # Configure base model from pretrained
-    model_mobilenet = mobilenet_v2.MobileNetV2(include_top=False, weights=weights, input_shape=input_shape)
-    output = model_mobilenet.layers[-1].output
+    output = model.layers[-1].output
     output = keras.layers.Flatten()(output)
-    mobile_model = Model(model_mobilenet.input, output)
+    joined_model = Model(model.input, output)
 
     # Set blocks 15 and 16 to be fine-tuneable
-    mobile_model.trainable = True
+    joined_model.trainable = True
     set_trainable = False
-    for layer in mobile_model.layers:
+    for layer in joined_model.layers:
         if layer.name in fine_tune:
             set_trainable = True
         if set_trainable:
@@ -45,14 +34,48 @@ def build_mobilenetv2(weights='imagenet', fine_tune=['block_14_expand', 'block_1
     # pd.DataFrame(layers, columns=['Layer Type', 'Layer Name', 'Layer Trainable'])
     # ps.DataFrame(layers, columns=['Layer Type', 'Layer Name', 'Layer Trainable']).tail(25)
 
+    return joined_model
+
+
+def add_head(transfer_model, input_shape):
+    """
+    Adds a classification head to pre-trained model architecture
+    :param transfer_model: model to add head to
+    :param input_shape: Shape of input layer
+    :return: model with classification head
+    """
     # add custom classifier head to model
     model = Sequential()
-    model.add(mobile_model)
+    model.add(transfer_model)
     model.add(Dense(512, activation='relu', input_dim=input_shape))
     model.add(Dropout(0.3))
     model.add(Dense(512, activation='relu'))
     model.add(Dropout(0.3))
     model.add(Dense(1, activation='sigmoid'))
+
+    return model
+
+
+def build_mobilenetv2(weights='imagenet', fine_tune=None):
+    """
+    Builds and compiles the MobileNetV2 model using pre-trained weights and custom classification head.
+
+    :param weights: Pre-trained weights to be used
+    :param fine_tune: First layer of each block to be fine-tuned
+    :return: The compiled model
+    """
+    if fine_tune is None:
+        fine_tune = ['block_14_expand', 'block_15_expand', 'block_16_expand']
+    input_shape = (224, 224, 3)
+
+    # Configure base model from pretrained
+    model_mobilenet = mobilenet_v2.MobileNetV2(include_top=False, weights=weights, input_shape=input_shape)
+
+    # Configure model layers to be trainable
+    mobile_model = set_trainable(model_mobilenet, fine_tune)
+
+    # add custom classifier head to model
+    model = add_head(mobile_model, input_shape)
 
     # compile model
     model.compile(loss='binary_crossentropy',
@@ -65,7 +88,7 @@ def build_mobilenetv2(weights='imagenet', fine_tune=['block_14_expand', 'block_1
     return model
 
 
-def build_nasnet(weights='imagenet', fine_tune=['block_14_expand', 'block_15_expand', 'block_16_expand']):
+def build_nasnet(weights='imagenet', fine_tune=None):
     """
     Builds and compiles the NASNetV2 model using pre-trained weights and custom classification head.
 
@@ -73,37 +96,18 @@ def build_nasnet(weights='imagenet', fine_tune=['block_14_expand', 'block_15_exp
     :param fine_tune: First layer of each block to be fine-tuned
     :return: The compiled model
     """
+    if fine_tune is None:
+        fine_tune = ['block_14_expand', 'block_15_expand', 'block_16_expand']
     input_shape = (224, 224, 3)
 
     # Configure base model from pretrained
     model_nasnet = nasnet.NASNetMobile(include_top=False, weights=weights, input_shape=input_shape)
-    output = model_nasnet.layers[-1].output
-    output = keras.layers.Flatten()(output)
-    nas_model = Model(model_nasnet.input, output)
 
-    # Set blocks 15 and 16 to be fine-tuneable
-    nas_model.trainable = True
-    set_trainable = False
-    for layer in nas_model.layers:
-        if layer.name in fine_tune:
-            set_trainable = True
-        if set_trainable:
-            layer.trainable = True
-        else:
-            layer.trainable = False
+    # Configure model layers to be trainable
+    nas_model = set_trainable(model_nasnet, fine_tune)
 
-    # layers = [(layer, layer.name, layer.trainable) for layer in mobile_model.layers]
-    # pd.DataFrame(layers, columns=['Layer Type', 'Layer Name', 'Layer Trainable'])
-    # ps.DataFrame(layers, columns=['Layer Type', 'Layer Name', 'Layer Trainable']).tail(25)
-
-    # add custom classifier head to model
-    model = Sequential()
-    model.add(nas_model)
-    model.add(Dense(512, activation='relu', input_dim=input_shape))
-    model.add(Dropout(0.3))
-    model.add(Dense(512, activation='relu'))
-    model.add(Dropout(0.3))
-    model.add(Dense(1, activation='sigmoid'))
+    # Add classification head
+    model = add_head(nas_model, input_shape)
 
     # compile model
     model.compile(loss='binary_crossentropy',
