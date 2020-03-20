@@ -79,7 +79,7 @@ bucket_files = [blob.name for blob in storage_client.list_blobs(bucket_name)]
 
 # Get available training sets from cloud and download
 ### NOTE: All training sets are being downloaded and used. If you only want to train on the fully augmented set uncomment the line below
-# bucket_files = bucket_files['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
+bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
 
 training_sets = defaultdict(list)
 for set in bucket_files:
@@ -124,14 +124,14 @@ model.compile(loss='binary_crossentropy',
 baseWeights = model.get_weights()
 # Loop and train using each training set
 ### NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
-for training_set in training_sets:
-    print("     Starting training for set {}".format(str(training_set)))
-    model.set_weights(baseWeights) # Resets model
-    train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][0]))
-    train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][1]))
-    history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
-    model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
-    upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
+# for training_set in training_sets:
+#     print("     Starting training for set {}".format(str(training_set)))
+#     model.set_weights(baseWeights) # Resets model
+#     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][0]))
+#     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][1]))
+#     history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
+#     model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
+#     upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
 
 
 # Vase VGG16 Model Retrain Block 4 and 5, Imagenet Weights
@@ -157,31 +157,34 @@ for layer in vgg_model.layers:
     else:
         layer.trainable = False
 
-model = Sequential()
-model.add(vgg_model)
-model.add(Dense(512, activation='relu', input_dim=input_shape))
-model.add(Dropout(0.3))
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(1, activation='sigmoid'))
+model_t = Sequential()
+model_t.add(vgg_model)
+model_t.add(Dense(512, activation='relu', input_dim=input_shape))
+model_t.add(Dropout(0.3))
+model_t.add(Dense(512, activation='relu'))
+model_t.add(Dropout(0.3))
+model_t.add(Dense(1, activation='sigmoid'))
 
-model.compile(loss='binary_crossentropy',
+model_t.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-5),
               metrics=['accuracy'])
 
-model.compile(loss='binary_crossentropy',
+model_t.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-5),
               metrics=['accuracy'])
+
+baseWeights_t = model_t.get_weights()
+
 
 ### NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
 for training_set in training_sets:
     print("     Starting training for set {}".format(str(training_set)))
-    model.set_weights(baseWeights) # Resets model
-    train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_set[0]))
-    train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_set[1]))
-    history = model.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
-    model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
-    upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_block4and5_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
+    model_t.set_weights(baseWeights_t) # Resets model
+    train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][0]))
+    train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][1]))
+    history = model_t.fit(train_x, train_y, batch_size=32, epochs=10, verbose=1)
+    model_t.save("./model_cache/VGG16_cache/{}_block4and5_vgg16.h5".format(str(training_set)))
+    upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_block4and5_vgg16.h5".format(str(training_set)),"{}_block4and5_vgg16.h5".format(str(training_set)))
 
 
 
