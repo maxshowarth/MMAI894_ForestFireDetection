@@ -82,39 +82,41 @@ training_sets = defaultdict(list)
 for set in bucket_files:
     if "training_sets" in set:
         training_sets[set.split("/")[1]].append(set.replace("/","-"))
-        # download_blob(bucket_name, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/","-"))))
+        download_blob(bucket_name, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/","-"))))
     else:
         continue
 
 
 # Base VGG16 Model No Retraining, Imagenet Weights
+print("Beginning base VGG16 Training")
 input_shape = (224, 224, 3)
-# model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
-# output = model_vgg16.layers[-1].output
-# output = keras.layers.Flatten()(output)
-# vgg_model = Model(model_vgg16.input, output)
-#
-# model = Sequential()
-# model.add(vgg_model)
-# model.add(Dense(512, activation='relu', input_dim=input_shape))
-# model.add(Dropout(0.3))
-# model.add(Dense(512, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(1, activation='sigmoid'))
-#
-# model.compile(loss='binary_crossentropy',
-#               optimizer=optimizers.RMSprop(lr=1e-5),
-#               metrics=['accuracy'])
-#
-# model.compile(loss='binary_crossentropy',
-#               optimizer=optimizers.RMSprop(lr=1e-5),
-#               metrics=['accuracy'])
+model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
+output = model_vgg16.layers[-1].output
+output = keras.layers.Flatten()(output)
+vgg_model = Model(model_vgg16.input, output)
 
-# Save base model weights
-# baseWeights = model.get_weights()
+model = Sequential()
+model.add(vgg_model)
+model.add(Dense(512, activation='relu', input_dim=input_shape))
+model.add(Dropout(0.3))
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(1, activation='sigmoid'))
+
+model.compile(loss='binary_crossentropy',
+              optimizer=optimizers.RMSprop(lr=1e-5),
+              metrics=['accuracy'])
+
+model.compile(loss='binary_crossentropy',
+              optimizer=optimizers.RMSprop(lr=1e-5),
+              metrics=['accuracy'])
+
+Save base model weights
+baseWeights = model.get_weights()
 # Loop and train using each training set
 for training_set in training_sets:
-    # model.set_weights(baseWeights)
+    print("     Starting training for set {}".format(str(training_set)))
+    model.set_weights(baseWeights)
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[1]))
     history = model.fit(train_x_scaled, train_y, batch_size=32, epochs=10, verbose=1)
@@ -123,6 +125,8 @@ for training_set in training_sets:
 
 
 # Vase VGG16 Model Retrain Block 4 and 5, Imagenet Weights
+print("Beginning retrainable VGG16 Training")
+
 input_shape = (224, 224, 3)
 model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
 output = model_vgg16.layers[-1].output
@@ -157,6 +161,7 @@ model.compile(loss='binary_crossentropy',
               metrics=['accuracy'])
 
 for training_set in training_sets:
+    print("     Starting training for set {}".format(str(training_set)))
     model.set_weights(baseWeights)
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_set[0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_set[1]))
