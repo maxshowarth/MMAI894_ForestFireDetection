@@ -111,7 +111,7 @@ model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-5),
               metrics=['accuracy'])
 
-Save base model weights
+# Save base model weights
 baseWeights = model.get_weights()
 # Loop and train using each training set
 for training_set in training_sets:
