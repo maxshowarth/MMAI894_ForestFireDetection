@@ -169,10 +169,6 @@ model_t.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-5),
               metrics=['accuracy'])
 
-model_t.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-5),
-              metrics=['accuracy'])
-
 baseWeights_t = model_t.get_weights()
 
 
