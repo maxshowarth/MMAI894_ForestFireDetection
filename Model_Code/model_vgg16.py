@@ -79,7 +79,7 @@ bucket_files = [blob.name for blob in storage_client.list_blobs(bucket_name)]
 
 # Get available training sets from cloud and download
 ### NOTE: All training sets are being downloaded and used. If you only want to train on the fully augmented set uncomment the line below
-bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
+# bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy', 'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
 
 training_sets = defaultdict(list)
 for set in bucket_files:
@@ -141,15 +141,15 @@ print("")
 print("Beginning retrainable VGG16 Training")
 
 input_shape = (224, 224, 3)
-model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
-output = model_vgg16.layers[-1].output
+model_vgg16_t = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
+output = model_vgg16_t.layers[-1].output
 output = keras.layers.Flatten()(output)
-vgg_model = Model(model_vgg16.input, output)
+vgg_model_t = Model(model_vgg16_t.input, output)
 
 # Set blocks 4 and 5 to be fine tuneable
-vgg_model.trainable = True
+vgg_model_t.trainable = True
 set_trainable = False
-for layer in vgg_model.layers:
+for layer in vgg_model_t.layers:
     if layer.name in ['block5_conv1', 'block4_conv1']:
         set_trainable = True
     if set_trainable:
@@ -158,7 +158,7 @@ for layer in vgg_model.layers:
         layer.trainable = False
 
 model_t = Sequential()
-model_t.add(vgg_model)
+model_t.add(vgg_model_t)
 model_t.add(Dense(512, activation='relu', input_dim=input_shape))
 model_t.add(Dropout(0.3))
 model_t.add(Dense(512, activation='relu'))
@@ -186,7 +186,3 @@ for training_set in training_sets:
     model_t.save("./model_cache/VGG16_cache/{}_block4and5_vgg16.h5".format(str(training_set)))
     upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_block4and5_vgg16.h5".format(str(training_set)),"{}_block4and5_vgg16.h5".format(str(training_set)))
 
-
-
-
-print(varname(variable))
