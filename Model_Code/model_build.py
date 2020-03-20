@@ -21,11 +21,11 @@ def set_trainable(model, fine_tune):
 
     # Set blocks 15 and 16 to be fine-tuneable
     joined_model.trainable = True
-    set_trainable = False
+    trainable_flag = False
     for layer in joined_model.layers:
         if layer.name in fine_tune:
-            set_trainable = True
-        if set_trainable:
+            trainable_flag = True
+        if trainable_flag:
             layer.trainable = True
         else:
             layer.trainable = False
