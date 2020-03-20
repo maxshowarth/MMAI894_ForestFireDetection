@@ -17,7 +17,7 @@ from multiprocessing import Pool
 
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/GCP Playground-34c3d1faef3b.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./GCP Playground-34c3d1faef3b.json"
 storage_client = storage.Client()
 
 bucket_name = "citric-inkwell-268501"

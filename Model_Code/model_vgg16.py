@@ -15,8 +15,9 @@ import pandas as pd
 import model_evaluation_utils as meu
 from google.cloud import storage
 import os
+from collections import defaultdict
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/max/Quick Jupyter Notebooks/MMAI/MMAI 894 - Deep Learning/GCP Playground-34c3d1faef3b.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./GCP Playground-34c3d1faef3b.json"
 storage_client = storage.Client()
 
 bucket_name = "citric-inkwell-268501"
@@ -81,41 +82,41 @@ training_sets = defaultdict(list)
 for set in bucket_files:
     if "training_sets" in set:
         training_sets[set.split("/")[1]].append(set.replace("/","-"))
-        download_blob(bucket_name, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/","-"))))
+        # download_blob(bucket_name, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/","-"))))
     else:
         continue
 
 
 # Base VGG16 Model No Retraining, Imagenet Weights
 input_shape = (224, 224, 3)
-model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
-output = model_vgg16.layers[-1].output
-output = keras.layers.Flatten()(output)
-vgg_model = Model(model_vgg16.input, output)
-
-model = Sequential()
-model.add(vgg_model)
-model.add(Dense(512, activation='relu', input_dim=input_shape))
-model.add(Dropout(0.3))
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(1, activation='sigmoid'))
-
-model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-5),
-              metrics=['accuracy'])
-
-model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-5),
-              metrics=['accuracy'])
+# model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
+# output = model_vgg16.layers[-1].output
+# output = keras.layers.Flatten()(output)
+# vgg_model = Model(model_vgg16.input, output)
+#
+# model = Sequential()
+# model.add(vgg_model)
+# model.add(Dense(512, activation='relu', input_dim=input_shape))
+# model.add(Dropout(0.3))
+# model.add(Dense(512, activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Dense(1, activation='sigmoid'))
+#
+# model.compile(loss='binary_crossentropy',
+#               optimizer=optimizers.RMSprop(lr=1e-5),
+#               metrics=['accuracy'])
+#
+# model.compile(loss='binary_crossentropy',
+#               optimizer=optimizers.RMSprop(lr=1e-5),
+#               metrics=['accuracy'])
 
 # Save base model weights
-baseWeights = model.get_weights()
+# baseWeights = model.get_weights()
 # Loop and train using each training set
 for training_set in training_sets:
-    model.set_weights(baseWeights)
-    train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_set[0]))
-    train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_set[1]))
+    # model.set_weights(baseWeights)
+    train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[0]))
+    train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[1]))
     history = model.fit(train_x_scaled, train_y, batch_size=32, epochs=10, verbose=1)
     model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
     upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
