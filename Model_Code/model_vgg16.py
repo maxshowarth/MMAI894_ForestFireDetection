@@ -99,26 +99,26 @@ for set in bucket_files:
 print("")
 print("Beginning base VGG16 Training")
 input_shape = (224, 224, 3)
-model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
-output = model_vgg16.layers[-1].output
-output = keras.layers.Flatten()(output)
-vgg_model = Model(model_vgg16.input, output)
-
-model = Sequential()
-model.add(vgg_model)
-model.add(Dense(512, activation='relu', input_dim=input_shape))
-model.add(Dropout(0.3))
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(1, activation='sigmoid'))
-
-model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-5),
-              metrics=['accuracy'])
-
-model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-5),
-              metrics=['accuracy'])
+# model_vgg16 = vgg16.VGG16(include_top = False, weights = 'imagenet', input_shape = input_shape)
+# output = model_vgg16.layers[-1].output
+# output = keras.layers.Flatten()(output)
+# vgg_model = Model(model_vgg16.input, output)
+#
+# model = Sequential()
+# model.add(vgg_model)
+# model.add(Dense(512, activation='relu', input_dim=input_shape))
+# model.add(Dropout(0.3))
+# model.add(Dense(512, activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Dense(1, activation='sigmoid'))
+#
+# model.compile(loss='binary_crossentropy',
+#               optimizer=optimizers.RMSprop(lr=1e-5),
+#               metrics=['accuracy'])
+#
+# model.compile(loss='binary_crossentropy',
+#               optimizer=optimizers.RMSprop(lr=1e-5),
+#               metrics=['accuracy'])
 
 # Save base model weights so the model can be reset after each training
 baseWeights = model.get_weights()
