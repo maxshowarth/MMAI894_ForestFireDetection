@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def display_examples(class_names, images, labels):
@@ -25,12 +24,12 @@ def plot_accuracy_loss(history):
     """
         Plot the accuracy and the loss during the training the network
     """
-    fig = plt.figure(figsize=(10,5))
+    fig = plt.figure(figsize=(15,10))
 
     # Plot accuracy
     plt.subplot(221)
-    plt.plot(history.history['accuracy'],'bo--', label = "acc")
-    plt.plot(history.history['val_accuracy'], 'ro--', label = "val_acc")
+    plt.plot(history.history['acc'],'bo--', label = "acc")
+    plt.plot(history.history['val_acc'], 'ro--', label = "val_acc")
     plt.title("train_acc vs val_acc")
     plt.ylabel("accuracy")
     plt.xlabel("epochs")
