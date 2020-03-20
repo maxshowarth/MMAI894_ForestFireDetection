@@ -121,7 +121,7 @@ input_shape = (224, 224, 3)
 #               metrics=['accuracy'])
 
 # Save base model weights so the model can be reset after each training
-baseWeights = model.get_weights()
+# baseWeights = model.get_weights()
 # Loop and train using each training set
 ### NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
 # for training_set in training_sets:
