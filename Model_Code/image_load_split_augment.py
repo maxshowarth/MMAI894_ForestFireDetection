@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle as pk
+from varname import varname
 
 
 
@@ -164,14 +165,15 @@ fire_labels = fire_image_data[1].tolist()
 
 # Define image augmentation generators
 
-zoom_augmentation = ImageDataGenerator(rescale=1./255, zoom_range=0.3)
-rotation_augmentation = ImageDataGenerator(rescale=1./255, rotation_range=180)
-widthShift_augmentation = ImageDataGenerator(rescale=1./255, width_shift_range=0.3)
-heightShift_augmentation = ImageDataGenerator(rescale=1./255, height_shift_range=0.3)
-shear_augmentation = ImageDataGenerator(rescale=1./255, shear_range=0.3)
-horizaontalFlip_augmentation = ImageDataGenerator(rescale=1./255, horizontal_flip=True)
-verticalFlip_augmentation = ImageDataGenerator(rescale=1./255, vertical_flip=True)
-full_augmentation = ImageDataGenerator(rescale=1./255,
+augmentors = {
+'zoom_augmentation' : ImageDataGenerator(rescale=1./255, zoom_range=0.3),
+'rotation_augmentation': ImageDataGenerator(rescale=1./255, rotation_range=180),
+'widthShift_augmentation' : ImageDataGenerator(rescale=1./255, width_shift_range=0.3),
+'heightShift_augmentation' : ImageDataGenerator(rescale=1./255, height_shift_range=0.3),
+'shear_augmentation' : ImageDataGenerator(rescale=1./255, shear_range=0.3),
+'horizaontalFlip_augmentation' : ImageDataGenerator(rescale=1./255, horizontal_flip=True),
+'verticalFlip_augmentation' : ImageDataGenerator(rescale=1./255, vertical_flip=True),
+'full_augmentation' : ImageDataGenerator(rescale=1./255,
                                        zoom_range=0.3,
                                        rotation_range=180,
                                    width_shift_range=0.3,
@@ -180,6 +182,7 @@ full_augmentation = ImageDataGenerator(rescale=1./255,
                                    horizontal_flip=True,
                                        vertical_flip=True,
                                        fill_mode='nearest')
+}
 
 # Define augmentation function
 def augmentImages(augmentation_generator):
@@ -192,22 +195,46 @@ def augmentImages(augmentation_generator):
             augmented_images.append(batch[0])
     return(augmented_images)
 
-# augmentation_generators = [zoom_augmentation, rotation_augmentation, widthShift_augmentation]
-# augmentedDataPack = []
+# Create iteratble list of augmentators
+# augmentation_generators = [zoom_augmentation, rotation_augmentation, widthShift_augmentation, heightShift_augmentation,shear_augmentation,horizaontalFlip_augmentation, verticalFlip_augmentation, full_augmentation ]
 
 # Do augmentation
-zoomed_images = augmentImages(zoom_augmentation)
-rotation_images = augmentImages(rotation_augmentation)
-widthShift_images = augmentImages(widthShift_augmentation)
-heightShift_images = augmentImages(heightShift_augmentation)
-shear_images = augmentImages(shear_augmentation)
-horizontalFlip_images = augmentImages(horizaontalFlip_augmentation)
-verticalFlip_images = augmentImages(verticalFlip_augmentation)
-fullyAugmented_images = augmentImages(full_augmentation)
+# zoomed_images = augmentImages(zoom_augmentation)
+# rotation_images = augmentImages(rotation_augmentation)
+# widthShift_images = augmentImages(widthShift_augmentation)
+# heightShift_images = augmentImages(heightShift_augmentation)
+# shear_images = augmentImages(shear_augmentation)
+# horizontalFlip_images = augmentImages(horizaontalFlip_augmentation)
+# verticalFlip_images = augmentImages(verticalFlip_augmentation)
+# fullyAugmented_images = augmentImages(full_augmentation)
 # print("done")
 # showNumpyImage(fullyAugmented_images[1])
 
 # Package augmented images as training sets and send to cloud
+augmentorCache = os.path.dirname("./model_cache/augemntor_cache")
+if os.path.isdir(augmentorCache):
+    print("Augmentor cache exists")
+else:
+    os.mkdir(augmentorCache)
+    print("Augmentor cache created")
+
+for augmentor in augmentors:
+    name, IGD = augmentor
+    augmented_images = augmentImages(IDG)
+    train_x_aug = np.concatenate((train_x_scaled, np.array(augmented_images)))
+    train_y_aug = np.concatenate((train_y, np.array([1 for i in range(len(train_x_aug))])))
+    local_train_x_path = os.path.join(augmentorCache, "/train_x_aug.npy")
+    local_train_y_path = os.path.join(augmentorCache, "/train_y_aug.npy"))
+    np.save(local_train_x_path, train_x_aug)
+    np.save(local_train_y_path, train_y_aug)
+    cloud_train_x_aug_path = "training_sets/{}_train_x_aug.npy".format(str(name))
+    cloud_train_y_aug_path = "trainin_sets/{}_train_y_aug.npy".format(str(name))
+    upload_blob(bucket_name, local_train_x_path, cloud_train_x_aug_path)
+    upload_blob(bucket_name, local_train_y_path, cloud_train_y_aug_path)
+
+
+
+
 def packageAndUpload(augmentedImages, augmentation_name):
     train_x_aug = np.concatenate((train_x_scaled), np.array(augmentedImages))
     aug_labels = []
@@ -219,7 +246,7 @@ def packageAndUpload(augmentedImages, augmentation_name):
     f = open(filePath, 'wb')
     pk.dump(training_pack, f)
     f.close()
-    upload_blob(bucket_name,filePath, augmentation_name)
+    # upload_blob(bucket_name,filePath, augmentation_name)
 
 packageAndUpload(zoomed_images, "zoomed_images")
 packageAndUpload(rotation_images, "rotation_images")
