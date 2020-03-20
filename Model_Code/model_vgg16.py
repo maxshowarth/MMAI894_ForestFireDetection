@@ -72,7 +72,7 @@ def showNumpyImage(image):
 if os.path.isdir('./model_cache/VGG16_cache'):
     print("Model Cache Exists")
 else:
-    os.mkdir("./model_cache/VGG16_cache")
+    os.mkdirs("./model_cache/VGG16_cache")
     print("Created Model Cache")
 
 bucket_files = [blob.name for blob in storage_client.list_blobs(bucket_name)]
