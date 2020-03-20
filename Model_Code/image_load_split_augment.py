@@ -209,7 +209,7 @@ def augmentAndUpload(augmentor):
     print("{} Beginning".format(str(name)))
     augmented_images = augmentImages(IGD)
     train_x_aug = np.concatenate((train_x_scaled, np.array(augmented_images)))
-    train_y_aug = np.concatenate((train_y, np.array([1 for i in range(len(train_x_aug))])))
+    train_y_aug = np.concatenate((train_y, np.array([1 for i in range(len(augmented_images))])))
     local_train_x_path = os.path.join(augmentorCache, "train_x_aug.npy")
     local_train_y_path = os.path.join(augmentorCache, "train_y_aug.npy")
     np.save(local_train_x_path, train_x_aug)
