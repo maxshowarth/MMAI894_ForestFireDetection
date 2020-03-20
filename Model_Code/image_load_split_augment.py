@@ -11,8 +11,8 @@ from shutil import unpack_archive, rmtree
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import matplotlib.pyplot as plt
-import pickle as pk
-from varname import varname
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 
 
 
@@ -211,51 +211,59 @@ def augmentImages(augmentation_generator):
 # showNumpyImage(fullyAugmented_images[1])
 
 # Package augmented images as training sets and send to cloud
-augmentorCache = os.path.dirname("./model_cache/augemntor_cache")
-if os.path.isdir(augmentorCache):
+augmentorCache = "./model_cache/augemntor_cache"
+if os.path.isdir("./model_cache/augemntor_cache"):
     print("Augmentor cache exists")
 else:
     os.mkdir(augmentorCache)
     print("Augmentor cache created")
 
-for augmentor in augmentors:
+# for augmentor in augmentors.items():
+def augmentAndUpload(augmentor):
     name, IGD = augmentor
-    augmented_images = augmentImages(IDG)
+    print("")
+    print("{} Beginning".format(str(name)))
+    augmented_images = augmentImages(IGD)
     train_x_aug = np.concatenate((train_x_scaled, np.array(augmented_images)))
     train_y_aug = np.concatenate((train_y, np.array([1 for i in range(len(train_x_aug))])))
-    local_train_x_path = os.path.join(augmentorCache, "/train_x_aug.npy")
-    local_train_y_path = os.path.join(augmentorCache, "/train_y_aug.npy"))
+    local_train_x_path = os.path.join(augmentorCache, "train_x_aug.npy")
+    local_train_y_path = os.path.join(augmentorCache, "train_y_aug.npy")
     np.save(local_train_x_path, train_x_aug)
     np.save(local_train_y_path, train_y_aug)
-    cloud_train_x_aug_path = "training_sets/{}_train_x_aug.npy".format(str(name))
-    cloud_train_y_aug_path = "trainin_sets/{}_train_y_aug.npy".format(str(name))
+    cloud_train_x_aug_path = "training_sets/{}/{}_train_x_aug.npy".format(str(name),str(name))
+    cloud_train_y_aug_path = "training_sets/{}/{}_train_y_aug.npy".format(str(name),str(name))
+    print("     {} Finished augmenting".format(str(name)))
+    print("     {} Beginning upload".format(str(name)))
     upload_blob(bucket_name, local_train_x_path, cloud_train_x_aug_path)
     upload_blob(bucket_name, local_train_y_path, cloud_train_y_aug_path)
+    print("     {} finished uploading".format(str(name)))
+    print("")
+
+for augmentor in augmentors.items():
+    augmentAndUpload(augmentor)
 
 
+# def packageAndUpload(augmentedImages, augmentation_name):
+#     train_x_aug = np.concatenate((train_x_scaled), np.array(augmentedImages))
+#     aug_labels = []
+#     for i in range(len(augmentImages())):
+#         aug_labels.append(1)
+#     train_y_aug = np.concatenate((train_y, np.array(aug_labels)))
+#     training_pack = [train_x_aug, train_y_aug]
+#     filePath = os.path.join("./model_cache/", "{}.pkl".format(str(augmentation_name)))
+#     f = open(filePath, 'wb')
+#     pk.dump(training_pack, f)
+#     f.close()
+#     # upload_blob(bucket_name,filePath, augmentation_name)
 
-
-def packageAndUpload(augmentedImages, augmentation_name):
-    train_x_aug = np.concatenate((train_x_scaled), np.array(augmentedImages))
-    aug_labels = []
-    for i in range(len(augmentImages())):
-        aug_labels.append(1)
-    train_y_aug = np.concatenate((train_y, np.array(aug_labels)))
-    training_pack = [train_x_aug, train_y_aug]
-    filePath = os.path.join("./model_cache/", "{}.pkl".format(str(augmentation_name)))
-    f = open(filePath, 'wb')
-    pk.dump(training_pack, f)
-    f.close()
-    # upload_blob(bucket_name,filePath, augmentation_name)
-
-packageAndUpload(zoomed_images, "zoomed_images")
-packageAndUpload(rotation_images, "rotation_images")
-packageAndUpload(widthShift_images, "widthShift_images")
-packageAndUpload(heightShift_images, "heightShift_images")
-packageAndUpload(shear_images, "shear_images")
-packageAndUpload(horizontalFlip_images, "horizontalFlip_images")
-packageAndUpload(verticalFlip_images, "verticalFlip_images")
-packageAndUpload(fullyAugmented_images, "fullyAugmented_images")
+# packageAndUpload(zoomed_images, "zoomed_images")
+# packageAndUpload(rotation_images, "rotation_images")
+# packageAndUpload(widthShift_images, "widthShift_images")
+# packageAndUpload(heightShift_images, "heightShift_images")
+# packageAndUpload(shear_images, "shear_images")
+# packageAndUpload(horizontalFlip_images, "horizontalFlip_images")
+# packageAndUpload(verticalFlip_images, "verticalFlip_images")
+# packageAndUpload(fullyAugmented_images, "fullyAugmented_images")
 
 
 
