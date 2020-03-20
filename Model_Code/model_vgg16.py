@@ -86,7 +86,7 @@ for set in bucket_files:
             print("{} already downloaded".format(str(set.split("/")[1])))
         else:
             print("{}  downloading".format(str(set.split("/")[1])))
-            # download_blob(bucket_name, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/","-"))))
+            download_blob(bucket_name, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/","-"))))
     else:
         continue
 
@@ -121,12 +121,12 @@ print("Beginning base VGG16 Training")
 # Loop and train using each training set
 for training_set in training_sets:
     print("     Starting training for set {}".format(str(training_set)))
-    # model.set_weights(baseWeights)
+    model.set_weights(baseWeights)
     train_x = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][0]))
     train_y = np.load(os.path.join("./model_cache/VGG16_cache", training_sets[training_set][1]))
-    # history = model.fit(train_x_scaled, train_y, batch_size=32, epochs=10, verbose=1)
-    # model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
-    # upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
+    history = model.fit(train_x_scaled, train_y, batch_size=32, epochs=10, verbose=1)
+    model.save("./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)))
+    upload_blob(bucket_name,"./model_cache/VGG16_cache/{}_base_vgg16.h5".format(str(training_set)),"{}_base_vgg16.h5".format(str(training_set)))
 
 
 # Vase VGG16 Model Retrain Block 4 and 5, Imagenet Weights
