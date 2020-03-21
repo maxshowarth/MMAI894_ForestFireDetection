@@ -253,3 +253,6 @@ def load_augmented_dataset():
                 print("{}  done downloading".format(str(training_set.split("/")[1])))
         else:
             continue
+
+    return training_sets
+

@@ -47,14 +47,12 @@ def train_vgg16():
 
 def train_mobilenetv2():
     # load data
-    load_augmented_dataset()
+    training_sets = load_augmented_dataset()
 
     # build models
     model_mobile = build_mobilenetv2()
 
-    training_sets = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy',
-                     'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
-
+    # store base weights
     baseWeights_t = model_mobile.get_weights()
 
     # NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
