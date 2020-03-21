@@ -1,10 +1,8 @@
 from keras.models import load_model
-
+import pandas as pd
+import numpy as np
 import os
-import model_evaluation_utils as meu
-import model_plot_utils as mpu
 from collections import defaultdict
-
 from blob_utils import *
 
 
@@ -38,10 +36,11 @@ def load_testset():
             continue
 
             
-    #laod testset        
+    #load testset        
     test_x = np.load(os.path.join("./model_cache/test_data", test_sets['test_x.npy'][0]))
     test_y = np.load(os.path.join("./model_cache/test_data", test_sets['test_y.npy'][0]))
     return test_x, test_y
+
 
 def load_saved_models():
     #load saved models:
@@ -66,8 +65,8 @@ def load_saved_models():
 
     return saved_models   
 
-def prediction():
-    
+
+def prediction():  
     if os.path.isdir('./model_cache/preds'):
         print("folder Exists")
     else:
