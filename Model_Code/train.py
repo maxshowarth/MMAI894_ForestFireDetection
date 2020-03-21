@@ -1,10 +1,10 @@
-from Model_Code.model_build import build_vgg_trainable, build_mobilenetv2, build_nasnet
-from Model_Code.blob_utils import *
-import Model_Code.model_evaluation_utils as meu
-import Model_Code.model_plot_utils as mpu
-from Model_Code.image_load_split_augment import load_augmented_dataset
 import numpy as np
-from keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
+from keras.callbacks import EarlyStopping
+
+import Model_Code.model_plot_utils as mpu
+from Model_Code.blob_utils import *
+from Model_Code.image_load_split_augment import load_augmented_dataset
+from Model_Code.model_build import build_vgg_trainable, build_mobilenetv2, build_nasnet
 
 BUCKET_NAME = "citric-inkwell-268501"
 
@@ -102,8 +102,8 @@ def train_nasnetmobile():
 
         early_stopping_monitor = EarlyStopping(patience=2)
         history = model_nas.fit(train_x, train_y, batch_size=32, epochs=20, verbose=1, validation_split=0.2,
-                                   shuffle=True,
-                                   callbacks=[early_stopping_monitor])
+                                shuffle=True,
+                                callbacks=[early_stopping_monitor])
 
         mpu.plot_accuracy_loss(history,
                                "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)))

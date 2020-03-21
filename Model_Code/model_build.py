@@ -15,14 +15,11 @@ def set_trainable(model, fine_tune):
     :param fine_tune: Layers to be trained
     :return: Configured model
     """
-    output = model.layers[-1].output
-    output = keras.layers.Flatten()(output)
-    joined_model = Model(model.input, output)
 
     # Set blocks 15 and 16 to be fine-tuneable
-    joined_model.trainable = True
+    model.trainable = True
     trainable_flag = False
-    for layer in joined_model.layers:
+    for layer in model.layers:
         if layer.name in fine_tune:
             trainable_flag = True
         if trainable_flag:
@@ -34,7 +31,7 @@ def set_trainable(model, fine_tune):
     # pd.DataFrame(layers, columns=['Layer Type', 'Layer Name', 'Layer Trainable'])
     # ps.DataFrame(layers, columns=['Layer Type', 'Layer Name', 'Layer Trainable']).tail(25)
 
-    return joined_model
+    return model
 
 
 def add_head(transfer_model, input_shape, head_type):
@@ -46,8 +43,12 @@ def add_head(transfer_model, input_shape, head_type):
     :return: model with classification head
     """
     if head_type == "basic":
+        output = transfer_model.layers[-1].output
+        output = keras.layers.Flatten()(output)
+        joined_model = Model(transfer_model.input, output)
+
         model = Sequential()
-        model.add(transfer_model)
+        model.add(joined_model)
         model.add(Dense(512, activation='relu', input_dim=input_shape))
         model.add(Dropout(0.3))
         model.add(Dense(512, activation='relu'))
