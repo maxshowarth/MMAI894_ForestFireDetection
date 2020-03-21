@@ -65,15 +65,15 @@ def train_mobilenetv2():
                                    callbacks=[early_stopping_monitor])
 
         mpu.plot_accuracy_loss(history,
-                               "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)))
+                               "./model_cache/train_data/{}_mobilenetv2_plots.png".format(str(training_set)))
 
-        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)),
-                    "model_charts/{}_block4and5_vgg16_plots.png".format(str(training_set)))
+        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_mobilenetv2_plots.png".format(str(training_set)),
+                    "model_charts/{}_mobilenetv2_plots.png".format(str(training_set)))
 
-        model_mobile.save("./model_cache/train_data/{}_block4and5_vgg16.h5".format(str(training_set)))
+        model_mobile.save("./model_cache/train_data/{}_mobilenetv2.h5".format(str(training_set)))
 
-        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_block4and5_vgg16.h5".format(str(training_set)),
-                    "saved_models/{}_block4and5_vgg16.h5".format(str(training_set)))
+        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_mobilenetv2.h5".format(str(training_set)),
+                    "saved_models/{}_mobilenetv2.h5".format(str(training_set)))
 
 
 def train_nasnetmobile():
@@ -98,12 +98,12 @@ def train_nasnetmobile():
                                 callbacks=[early_stopping_monitor])
 
         mpu.plot_accuracy_loss(history,
-                               "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)))
+                               "./model_cache/train_data/{}_nasnetmobile_plots.png".format(str(training_set)))
 
-        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)),
-                    "model_charts/{}_block4and5_vgg16_plots.png".format(str(training_set)))
+        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_nasnetmobile_plots.png".format(str(training_set)),
+                    "model_charts/{}_nasnetmobile_plots.png".format(str(training_set)))
 
-        model_nas.save("./model_cache/train_data/{}_block4and5_vgg16.h5".format(str(training_set)))
+        model_nas.save("./model_cache/train_data/{}_nasnetmobile.h5".format(str(training_set)))
 
-        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_block4and5_vgg16.h5".format(str(training_set)),
-                    "saved_models/{}_block4and5_vgg16.h5".format(str(training_set)))
+        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_nasnetmobile.h5".format(str(training_set)),
+                    "saved_models/{}_nasnetmobile.h5".format(str(training_set)))
