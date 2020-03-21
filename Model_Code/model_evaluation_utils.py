@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jul 31 20:05:23 2017
+
+@author: DIP
+@Copyright: Dipanjan Sarkar
+"""
+
 from sklearn import metrics
 import numpy as np
 import pandas as pd
@@ -10,92 +18,98 @@ from sklearn.metrics import roc_curve, auc
 
 
 def get_metrics(true_labels, predicted_labels):
-    
     print('Accuracy:', np.round(
-                        metrics.accuracy_score(true_labels, 
-                                               predicted_labels),
-                        4))
+        metrics.accuracy_score(true_labels,
+                               predicted_labels),
+        4))
     print('Precision:', np.round(
-                        metrics.precision_score(true_labels, 
-                                               predicted_labels,
-                                               average='weighted'),
-                        4))
+        metrics.precision_score(true_labels,
+                                predicted_labels,
+                                average='weighted'),
+        4))
     print('Recall:', np.round(
-                        metrics.recall_score(true_labels, 
-                                               predicted_labels,
-                                               average='weighted'),
-                        4))
+        metrics.recall_score(true_labels,
+                             predicted_labels,
+                             average='weighted'),
+        4))
     print('F1 Score:', np.round(
-                        metrics.f1_score(true_labels, 
-                                               predicted_labels,
-                                               average='weighted'),
-                        4))
-                        
+        metrics.f1_score(true_labels,
+                         predicted_labels,
+                         average='weighted'),
+        4))
 
-def train_predict_model(classifier, 
-                        train_features, train_labels, 
+
+def train_predict_model(classifier,
+                        train_features, train_labels,
                         test_features, test_labels):
-    # build model    
+    # build model
     classifier.fit(train_features, train_labels)
     # predict using model
-    predictions = classifier.predict(test_features) 
-    return predictions    
+    predictions = classifier.predict(test_features)
+    return predictions
 
 
-def display_confusion_matrix(true_labels, predicted_labels, classes=[1,0]):
-    
+def display_confusion_matrix(true_labels, predicted_labels, classes=[1, 0]):
     total_classes = len(classes)
-    level_labels = [total_classes*[0], list(range(total_classes))]
+    level_labels = [total_classes * [0], list(range(total_classes))]
 
-    cm = metrics.confusion_matrix(y_true=true_labels, y_pred=predicted_labels, 
+    cm = metrics.confusion_matrix(y_true=true_labels, y_pred=predicted_labels,
                                   labels=classes)
+    cm_frame = pd.DataFrame(data=cm,
+                            columns=pd.MultiIndex(levels=[['Predicted:'], classes],
+                                                  labels=level_labels),
+                            index=pd.MultiIndex(levels=[['Actual:'], classes],
+                                                labels=level_labels))
+    print(cm_frame)
 
-    print(cm) 
-    
+
+    print(cm)
+
 def display_classification_report(true_labels, predicted_labels, classes=[1,0]):
 
-    report = metrics.classification_report(y_true=true_labels, 
-                                           y_pred=predicted_labels, 
-                                           labels=classes) 
-    print(report)
-    
-    
-    
-def display_model_performance_metrics(true_labels, predicted_labels, classes=[1,0]):
+def classification_report_df(true_labels, predicted_labels, classes=[1, 0]):
+    report = metrics.classification_report(y_true=true_labels,
+                                           y_pred=predicted_labels,
+                                           labels=classes,
+                                           output_dict=True)
+    df_report = pd.DataFrame(report).transpose()
+    return df_report
+
+
+def display_model_performance_metrics(true_labels, predicted_labels, classes=[1, 0]):
     print('Model Performance metrics:')
-    print('-'*30)
+    print('-' * 30)
     get_metrics(true_labels=true_labels, predicted_labels=predicted_labels)
     print('\nModel Classification report:')
-    print('-'*30)
-    display_classification_report(true_labels=true_labels, predicted_labels=predicted_labels, 
+    print('-' * 30)
+    display_classification_report(true_labels=true_labels, predicted_labels=predicted_labels,
                                   classes=classes)
     print('\nPrediction Confusion Matrix:')
-    print('-'*30)
-    display_confusion_matrix(true_labels=true_labels, predicted_labels=predicted_labels, 
+    print('-' * 30)
+    display_confusion_matrix(true_labels=true_labels, predicted_labels=predicted_labels,
                              classes=classes)
 
 
 def plot_model_decision_surface(clf, train_features, train_labels,
                                 plot_step=0.02, cmap=plt.cm.RdYlBu,
                                 markers=None, alphas=None, colors=None):
-    
     if train_features.shape[1] != 2:
         raise ValueError("X_train should have exactly 2 columnns!")
-    
+
     x_min, x_max = train_features[:, 0].min() - plot_step, train_features[:, 0].max() + plot_step
     y_min, y_max = train_features[:, 1].min() - plot_step, train_features[:, 1].max() + plot_step
     xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                          np.arange(y_min, y_max, plot_step))
 
     clf_est = clone(clf)
-    clf_est.fit(train_features,train_labels)
+    clf_est.fit(train_features, train_labels)
     if hasattr(clf_est, 'predict_proba'):
-        Z = clf_est.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:,1]
+        Z = clf_est.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
     else:
-        Z = clf_est.predict(np.c_[xx.ravel(), yy.ravel()])    
+        Z = clf_est.predict(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
     cs = plt.contourf(xx, yy, Z, cmap=cmap)
-    
+
     le = LabelEncoder()
     y_enc = le.fit_transform(train_labels)
     n_classes = len(le.classes_)
@@ -106,14 +120,13 @@ def plot_model_decision_surface(clf, train_features, train_labels,
     for i, color in zip(range(n_classes), plot_colors):
         idx = np.where(y_enc == i)
         plt.scatter(train_features[idx, 0], train_features[idx, 1], c=color,
-                    label=label_names[i], cmap=cmap, edgecolors='black', 
+                    label=label_names[i], cmap=cmap, edgecolors='black',
                     marker=markers[i], alpha=alphas[i])
     plt.legend()
     plt.show()
 
 
 def plot_model_roc_curve(clf, features, true_labels, label_encoder=None, class_names=None):
-    
     ## Compute ROC curve and ROC area for each class
     fpr = dict()
     tpr = dict()
@@ -131,19 +144,19 @@ def plot_model_roc_curve(clf, features, true_labels, label_encoder=None, class_n
     if n_classes == 2:
         if hasattr(clf, 'predict_proba'):
             prob = clf.predict_proba(features)
-            y_score = prob[:, prob.shape[1]-1] 
+            y_score = prob[:, prob.shape[1] - 1]
         elif hasattr(clf, 'decision_function'):
             prob = clf.decision_function(features)
-            y_score = prob[:, prob.shape[1]-1]
+            y_score = prob[:, prob.shape[1] - 1]
         else:
             raise AttributeError("Estimator doesn't have a probability or confidence scoring system!")
-        
-        fpr, tpr, _ = roc_curve(y_test, y_score)      
+
+        fpr, tpr, _ = roc_curve(y_test, y_score)
         roc_auc = auc(fpr, tpr)
         plt.plot(fpr, tpr, label='ROC curve (area = {0:0.2f})'
                                  ''.format(roc_auc),
                  linewidth=2.5)
-        
+
     elif n_classes > 2:
         if hasattr(clf, 'predict_proba'):
             y_score = clf.predict_proba(features)
@@ -185,11 +198,11 @@ def plot_model_roc_curve(clf, features, true_labels, label_encoder=None, class_n
 
         for i, label in enumerate(class_labels):
             plt.plot(fpr[i], tpr[i], label='ROC curve of class {0} (area = {1:0.2f})'
-                                           ''.format(label, roc_auc[i]), 
+                                           ''.format(label, roc_auc[i]),
                      linewidth=2, linestyle=':')
     else:
         raise ValueError('Number of classes should be atleast 2 or more')
-        
+
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
