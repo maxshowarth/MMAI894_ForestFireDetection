@@ -88,11 +88,32 @@ def build_mobilenetv2(weights='imagenet', fine_tune=None):
     # Configure base model from pretrained
     model_mobilenet = mobilenet_v2.MobileNetV2(include_top=False, weights=weights, input_shape=input_shape)
 
-    # Configure model layers to be trainable
-    mobile_model = set_trainable(model_mobilenet, fine_tune)
+    # Set blocks 15 and 16 to be fine tuneable
+    model_mobilenet.trainable = True
+    set_trainable = False
+    for layer in model_mobilenet.layers:
+        if layer.name in ['block_4_expand']:
+            set_trainable = True
+        if set_trainable:
+            layer.trainable = True
+        else:
+            layer.trainable = False
 
-    # add custom classifier head to model
-    model = add_head(mobile_model, input_shape, head_type='colin')
+    inputs = Input((224, 224, 3))
+    x = model_mobilenet(inputs)
+    out1 = GlobalMaxPooling2D()(x)
+    out2 = GlobalAveragePooling2D()(x)
+    out3 = Flatten()(x)
+    out = Concatenate(axis=-1)([out1, out2, out3])
+    out = Dropout(0.5)(out)
+    out = Dense(1, activation="sigmoid", name="3_")(out)
+    model = Model(inputs, out)
+
+    # # Configure model layers to be trainable
+    # mobile_model = set_trainable(model_mobilenet, fine_tune)
+    #
+    # # add custom classifier head to model
+    # model = add_head(mobile_model, input_shape, head_type='colin')
 
     # compile model
     model.compile(loss='binary_crossentropy',

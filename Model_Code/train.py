@@ -63,7 +63,7 @@ def train_mobilenetv2():
         train_y = np.load(os.path.join("./model_cache/train_data", training_sets[training_set][1]))
 
         early_stopping_monitor = EarlyStopping(patience=2)
-        history = model_mobile.fit(train_x, train_y, batch_size=16, epochs=20, verbose=1, validation_split=0.2,
+        history = model_mobile.fit(train_x, train_y, batch_size=32, epochs=20, verbose=1, validation_split=0.2,
                                    shuffle=True,
                                    callbacks=[early_stopping_monitor])
 
