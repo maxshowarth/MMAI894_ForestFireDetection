@@ -1,6 +1,42 @@
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+
+def plot_accuracy_loss(history, path):
+    """
+        Plot the accuracy and the loss during the training the network
+    """
+    fig = plt.figure(figsize=(15,10))
+
+    # Plot accuracy
+    plt.subplot(221)
+    plt.plot(history.history['accuracy'],'bo--', label = "acc")
+    plt.plot(history.history['val_accuracy'], 'ro--', label = "val_acc")
+    plt.title("train_acc vs val_acc")
+    plt.ylabel("accuracy")
+    plt.xlabel("epochs")
+    plt.legend()
+
+    # Plot loss function
+    plt.subplot(222)
+    plt.plot(history.history['loss'],'bo--', label = "loss")
+    plt.plot(history.history['val_loss'], 'ro--', label = "val_loss")
+    plt.title("train_loss vs val_loss")
+    plt.ylabel("loss")
+    plt.xlabel("epochs")
+    
+    fig.savefig(path)
+
+    plt.legend()
+    plt.close(fig)
+
+
+def showNumpyImage(image):
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), interpolation='nearest')
+    plt.show()
 
 
 def display_examples(class_names, images, labels):
@@ -17,33 +53,6 @@ def display_examples(class_names, images, labels):
         plt.grid(False)
         plt.imshow(images[i], cmap=plt.cm.binary)
         plt.xlabel(class_names[labels[i]])
-    plt.show()
-
-    
-def plot_accuracy_loss(history):
-    """
-        Plot the accuracy and the loss during the training the network
-    """
-    fig = plt.figure(figsize=(15,10))
-
-    # Plot accuracy
-    plt.subplot(221)
-    plt.plot(history.history['acc'],'bo--', label = "acc")
-    plt.plot(history.history['val_acc'], 'ro--', label = "val_acc")
-    plt.title("train_acc vs val_acc")
-    plt.ylabel("accuracy")
-    plt.xlabel("epochs")
-    plt.legend()
-
-    # Plot loss function
-    plt.subplot(222)
-    plt.plot(history.history['loss'],'bo--', label = "loss")
-    plt.plot(history.history['val_loss'], 'ro--', label = "val_loss")
-    plt.title("train_loss vs val_loss")
-    plt.ylabel("loss")
-    plt.xlabel("epochs")
-
-    plt.legend()
     plt.show()
     
 
