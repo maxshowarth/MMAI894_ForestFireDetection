@@ -58,11 +58,11 @@ def train_mobilenetv2():
     baseWeights_t = model_mobile.get_weights()
 
     # NOTE: You can still leave this alone if you've only downloaded the fully augmented set.
-    for training_set in training_sets:
+    for idx, training_set in enumerate(training_sets):
         print("     Starting training for set {}".format(str(training_set)))
         model_mobile.set_weights(baseWeights_t)  # Resets model
-        train_x = np.load(os.path.join("./model_cache/train_data", training_sets[training_set][0]))
-        train_y = np.load(os.path.join("./model_cache/train_data", training_sets[training_set][1]))
+        train_x = np.load(os.path.join("./model_cache/train_data", training_sets[idx][0]))
+        train_y = np.load(os.path.join("./model_cache/train_data", training_sets[idx][1]))
 
         early_stopping_monitor = EarlyStopping(patience=2)
         history = model_mobile.fit(train_x, train_y, batch_size=32, epochs=20, verbose=1, validation_split=0.2,
