@@ -159,18 +159,18 @@ test_x_scaled /= 255
 
 
 # Save and upload unaugmented data
-np.save('./model_cache/unaugmented_train_x.npy', train_x_scaled)
-np.save('./model_cache/unaugmented_train_y.npy', train_y)
-if "training_sets/no_augmentation/no_augmentation/train_x.npy" in bucket_files:
-    print("unagumented_train_x.npy already uploaded")
-    pass
-else:
-    upload_blob(bucket_name, './model_cache/unaugmented_train_x.npy', "training_sets/no_augmentation/no_augmentation_train_x.npy" )
-
-if "training_sets/no_augmentation/no_augmentation/train_y.npy" in bucket_files:
-    print("unagumented_train_y.npy already uploaded")
-else:
-    upload_blob(bucket_name, './model_cache/unaugmented_train_y.npy', "training_sets/no_augmentation/no_augmentation_train_y.npy" )
+# np.save('./model_cache/unaugmented_train_x.npy', train_x_scaled)
+# np.save('./model_cache/unaugmented_train_y.npy', train_y)
+# if "training_sets/no_augmentation/no_augmentation/train_x.npy" in bucket_files:
+#     print("unagumented_train_x.npy already uploaded")
+#     pass
+# else:
+#     upload_blob(bucket_name, './model_cache/unaugmented_train_x.npy', "training_sets/no_augmentation/no_augmentation_train_x.npy" )
+#
+# if "training_sets/no_augmentation/no_augmentation/train_y.npy" in bucket_files:
+#     print("unagumented_train_y.npy already uploaded")
+# else:
+#     upload_blob(bucket_name, './model_cache/unaugmented_train_y.npy', "training_sets/no_augmentation/no_augmentation_train_y.npy" )
 
 # Save and upload test data
 np.save('./model_cache/test_x.npy', test_x_scaled)
