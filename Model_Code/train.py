@@ -11,13 +11,10 @@ BUCKET_NAME = "citric-inkwell-268501"
 
 def train_vgg16():
     # load data
-    load_augmented_dataset()
+    training_sets = load_augmented_dataset()
 
     # build models
     model_vgg = build_vgg_trainable()
-
-    training_sets = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy',
-                     'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
 
     baseWeights_t = model_vgg.get_weights()
 
@@ -81,13 +78,10 @@ def train_mobilenetv2():
 
 def train_nasnetmobile():
     # load data
-    load_augmented_dataset()
+    training_sets = load_augmented_dataset()
 
     # build models
     model_nas = build_nasnet()
-
-    training_sets = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy',
-                     'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
 
     baseWeights_t = model_nas.get_weights()
 
