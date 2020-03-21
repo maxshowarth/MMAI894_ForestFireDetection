@@ -1,10 +1,10 @@
 import numpy as np
 from keras.callbacks import EarlyStopping
 
-import Model_Code.model_plot_utils as mpu
-from Model_Code.blob_utils import *
-from Model_Code.image_load_split_augment import load_augmented_dataset
-from Model_Code.model_build import build_vgg_trainable, build_mobilenetv2, build_nasnet
+import model_plot_utils as mpu
+from blob_utils import *
+from image_load_split_augment import load_augmented_dataset
+from model_build import build_vgg_trainable, build_mobilenetv2, build_nasnet
 
 BUCKET_NAME = "citric-inkwell-268501"
 

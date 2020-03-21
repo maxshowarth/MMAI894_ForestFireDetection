@@ -9,7 +9,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from numpy import expand_dims
 from sklearn.model_selection import train_test_split
 
-from Model_Code.blob_utils import *
+from blob_utils import *
 
 BUCKET_NAME = "citric-inkwell-268501"
 
