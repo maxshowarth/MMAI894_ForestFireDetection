@@ -231,11 +231,12 @@ def load_augmented_dataset():
     Loads a pre-split, pre-scaled dataset from cloud to memory
     :return:
     """
+
     # Check for existance of local model_cache and create if it does not exist
-    if os.path.isdir('./model_cache/VGG16_cache'):
+    if os.path.isdir('./model_cache/train_data'):
         print("Model Cache Exists")
     else:
-        os.makedirs("./model_cache/VGG16_cache")
+        os.makedirs("./model_cache/train_data")
         print("Created Model Cache")
 
     bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy',
@@ -245,11 +246,11 @@ def load_augmented_dataset():
     for training_set in bucket_files:
         if "training_sets" in training_set:
             training_sets[training_set.split("/")[1]].append(training_set.replace("/", "-"))
-            if os.path.exists(os.path.join("./model_cache/VGG16_cache", str(training_set.replace("/", "-")))):
+            if os.path.exists(os.path.join("./model_cache/train_data", str(training_set.replace("/", "-")))):
                 print("{} already downloaded".format(str(training_set.split("/")[1])))
             else:
                 print("{}  downloading".format(str(training_set.split("/")[1])))
-                download_blob(BUCKET_NAME, training_set, os.path.join("./model_cache/VGG16_cache", str(training_set.replace("/", "-"))))
+                download_blob(BUCKET_NAME, training_set, os.path.join("./model_cache/train_data", str(training_set.replace("/", "-"))))
                 print("{}  done downloading".format(str(training_set.split("/")[1])))
         else:
             continue
