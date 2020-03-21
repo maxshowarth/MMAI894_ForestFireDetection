@@ -13,16 +13,6 @@ from keras.layers import Conv2D, Dropout, Dense, Flatten, MaxPooling2D
 from keras.models import Model, Sequential, load_model
 
 
-def showNumpyImage(image):
-    """
-    Displays an image (numpy) in true color.
-    :param image: Image to be displayed, 3d numpy array
-    :return: null
-    """
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), interpolation='nearest')
-    plt.show()
-
-
 def train_model(model, X, y, batch_size=32, epochs=5):
     """
     Trains a model
@@ -34,7 +24,7 @@ def train_model(model, X, y, batch_size=32, epochs=5):
     :return: Trained model, Training history
     """
     history = model.fit(X, y, batch_size=batch_size, epochs=epochs,
-                        verbose=true)
+                        verbose=True)
 
     return model, history
 

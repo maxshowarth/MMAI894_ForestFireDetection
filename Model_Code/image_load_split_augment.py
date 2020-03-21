@@ -1,74 +1,17 @@
-import os
+from collections import defaultdict
 from random import shuffle
 from shutil import unpack_archive, rmtree
 
 import cv2
 import numpy as np
 import pandas as pd
-from google.cloud import storage
 from keras.preprocessing.image import ImageDataGenerator
 from numpy import expand_dims
 from sklearn.model_selection import train_test_split
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./GCP Playground-34c3d1faef3b.json"
+from Model_Code.blob_utils import *
+
 BUCKET_NAME = "citric-inkwell-268501"
-
-
-def list_blobs(bucket_name):
-    """
-    List all blobs in cloud storage bucket
-    :param bucket_name: Name of cloud storage bucket
-    :return blobs: list of blobs in cloud storage bucket
-    """
-    storage_client = storage.Client()
-    blobs = storage_client.list_blobs(bucket_name)
-    for blob in blobs:
-        print(blob.name)
-
-    return blobs
-
-
-def download_blob(bucket_name, source_blob_name, destination_file_name):
-    """
-    Download a blob to file-like object from cloud storage bucket.
-    :param bucket_name: Name of cloud storage bucket
-    :param source_blob_name: Path to blob in cloud storage bucket
-    :param destination_file_name: Name of downloaded file
-    :return: null
-    """
-    storage_client = storage.Client()
-
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(source_blob_name)
-    blob.download_to_filename(destination_file_name)
-
-    print(
-        "Blob {} downloaded to {}.".format(
-            source_blob_name, destination_file_name
-        )
-    )
-
-
-def upload_blob(bucket_name, source_file_name, destination_blob_name):
-    """
-    Uploads a file-like blob to a cloud storage bucket
-    :param bucket_name: Name of bucket to upload to
-    :param source_file_name: Name of file to upload
-    :param destination_blob_name: Path to destination in storage bucket
-    :return: null
-    """
-
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
-
-    blob.upload_from_filename(source_file_name)
-
-    print(
-        "File {} uploaded to {}.".format(
-            source_file_name, destination_blob_name
-        )
-    )
 
 
 def resize_and_shuffle(image_directory, label=0):
@@ -281,3 +224,32 @@ def load_fire_dataset():
         augment_and_upload(augmentor, fire_images, train_x, train_y)
 
     print("Done")
+
+
+def load_augmented_dataset():
+    """
+    Loads a pre-split, pre-scaled dataset from cloud to memory
+    :return:
+    """
+    # Check for existance of local model_cache and create if it does not exist
+    if os.path.isdir('./model_cache/VGG16_cache'):
+        print("Model Cache Exists")
+    else:
+        os.makedirs("./model_cache/VGG16_cache")
+        print("Created Model Cache")
+
+    bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy',
+                    'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
+
+    training_sets = defaultdict(list)
+    for training_set in bucket_files:
+        if "training_sets" in training_set:
+            training_sets[set.split("/")[1]].append(set.replace("/", "-"))
+            if os.path.exists(os.path.join("./model_cache/VGG16_cache", str(set.replace("/", "-")))):
+                print("{} already downloaded".format(str(set.split("/")[1])))
+            else:
+                print("{}  downloading".format(str(set.split("/")[1])))
+                download_blob(BUCKET_NAME, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/", "-"))))
+                print("{}  done downloading".format(str(set.split("/")[1])))
+        else:
+            continue
