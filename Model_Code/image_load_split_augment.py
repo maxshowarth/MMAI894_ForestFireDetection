@@ -244,12 +244,12 @@ def load_augmented_dataset():
     training_sets = defaultdict(list)
     for training_set in bucket_files:
         if "training_sets" in training_set:
-            training_sets[set.split("/")[1]].append(set.replace("/", "-"))
-            if os.path.exists(os.path.join("./model_cache/VGG16_cache", str(set.replace("/", "-")))):
-                print("{} already downloaded".format(str(set.split("/")[1])))
+            training_sets[training_set.split("/")[1]].append(training_set.replace("/", "-"))
+            if os.path.exists(os.path.join("./model_cache/VGG16_cache", str(training_set.replace("/", "-")))):
+                print("{} already downloaded".format(str(training_set.split("/")[1])))
             else:
-                print("{}  downloading".format(str(set.split("/")[1])))
-                download_blob(BUCKET_NAME, set, os.path.join("./model_cache/VGG16_cache", str(set.replace("/", "-"))))
-                print("{}  done downloading".format(str(set.split("/")[1])))
+                print("{}  downloading".format(str(training_set.split("/")[1])))
+                download_blob(BUCKET_NAME, training_set, os.path.join("./model_cache/VGG16_cache", str(training_set.replace("/", "-"))))
+                print("{}  done downloading".format(str(training_set.split("/")[1])))
         else:
             continue
