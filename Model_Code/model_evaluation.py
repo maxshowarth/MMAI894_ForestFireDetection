@@ -63,7 +63,7 @@ def load_saved_models():
 
     saved_models = defaultdict(list)
     for filename in bucket_files:
-        if "saved_models" in filename:
+        if "vgg_models" in filename:
             saved_models[filename.split("/")[1]].append(filename.replace("/", "-"))
             if os.path.exists(os.path.join("./model_cache/saved_models", str(filename.replace("/", "-")))):
                 print("{} already downloaded".format(str(filename.split("/")[1])))
@@ -100,9 +100,9 @@ def prediction():
 
         preds = pd.DataFrame({'true': test_y, 'pred': np.ravel(test_predictions)})
 
-        preds.to_csv("./model_cache/preds/{}_pred.csv".format(str(saved_model[0])[13:-3]))
-        upload_blob(BUCKET_NAME, "./model_cache/preds/{}_pred.csv".format(str(saved_model[0])[13:-3]),
-                    "models_predictions/{}_pred.csv".format(str(saved_model[0])[13:-3]))
+        preds.to_csv("./model_cache/preds/{}_pred_ind.csv".format(str(saved_model[0])[13:-3]))
+        upload_blob(BUCKET_NAME, "./model_cache/preds/{}_pred_ind.csv".format(str(saved_model[0])[13:-3]),
+                    "models_predictions/{}_pred_ind.csv".format(str(saved_model[0])[13:-3]))
 
 
 if __name__ == '__main__':
