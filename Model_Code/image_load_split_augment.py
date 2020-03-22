@@ -240,7 +240,9 @@ def load_augmented_dataset():
         print("Created Model Cache")
 
     bucket_files = ['training_sets/full_augmentation/full_augmentation_train_x_aug.npy',
-                    'training_sets/full_augmentation/full_augmentation_train_y_aug.npy']
+                    'training_sets/full_augmentation/full_augmentation_train_y_aug.npy',
+                    'training_sets/no_augmentation/no_augmentation_train_x.npy',
+                    'training_sets/no_augmentation/no_augmentation_train_y.npy']
 
     training_sets = defaultdict(list)
     for training_set in bucket_files:
