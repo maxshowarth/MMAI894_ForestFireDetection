@@ -111,7 +111,7 @@ def build_vgg_trainable(weights='imagenet', fine_tune=None):
     :return:
     """
     if fine_tune is None:
-        fine_tune = ['block5_conv1', 'block4_conv1']
+        fine_tune = ['block4_conv1', 'block5_conv1']
 
     input_shape = (224, 224, 3)
 
@@ -120,6 +120,17 @@ def build_vgg_trainable(weights='imagenet', fine_tune=None):
     output = base_model.layers[-1].output
     output = keras.layers.Flatten()(output)
     vgg_model = Model(base_model.input, output)
+
+    # Set blocks 4 and down to be fine tuneable
+    vgg_model.trainable = True
+    set_trainable = False
+    for layer in vgg_model.layers:
+        if layer.name in fine_tune:
+            set_trainable = True
+        if set_trainable:
+            layer.trainable = True
+        else:
+            layer.trainable = False
 
     model = Sequential()
     model.add(vgg_model)
@@ -156,6 +167,9 @@ def build_vgg_frozen(weights='imagenet', fine_tune=None):
     output = base_model.layers[-1].output
     output = keras.layers.Flatten()(output)
     vgg_model = Model(base_model.input, output)
+
+    # Freeze pre-trained weights
+    vgg_model.trainable = False
 
     model = Sequential()
     model.add(vgg_model)
