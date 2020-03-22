@@ -1,3 +1,11 @@
+"""
+Adapted from:
+@author: DIP
+@copyright: Dipanjan Sarkar
+
+https://github.com/dipanjanS/practical-machine-learning-with-python/
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

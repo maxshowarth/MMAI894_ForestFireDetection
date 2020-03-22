@@ -4,11 +4,15 @@ import matplotlib
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import cv2
 
 
 def plot_accuracy_loss(history, path):
     """
-        Plot the accuracy and the loss during the training the network
+    Plot the accuracy and the loss during the training the network
+    :param history: model training history object
+    :param path: path to save figure
+    :return: null
     """
     fig = plt.figure(figsize=(15, 10))
 
@@ -36,13 +40,25 @@ def plot_accuracy_loss(history, path):
 
 
 def showNumpyImage(image):
+    """
+    Displays a numpy image object in true color.
+
+    :param image:
+    :return: null
+    """
+
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), interpolation='nearest')
     plt.show()
 
 
 def display_examples(class_names, images, labels):
     """
-        Display 25 images from the images array with its corresponding labels
+    Display 25 images from the images array with its corresponding labels
+
+    :param class_names: list-like object containing class names
+    :param images: list-like object containing images database
+    :param labels: list-like object containing labels
+    :return: null
     """
 
     fig = plt.figure(figsize=(10, 10))
@@ -59,8 +75,15 @@ def display_examples(class_names, images, labels):
 
 def print_mislabeled_images(class_names, test_images, test_labels, pred_labels):
     """
-        Print 25 examples of mislabeled images by the classifier, e.g when test_labels != pred_labels
+    Print 25 examples of mislabeled images by the classifier, e.g when test_labels != pred_labels.
+
+    :param class_names: list-like object containing class names
+    :param test_images: list-like object containing images
+    :param test_labels: list-like object containing true labels of images
+    :param pred_labels: list-like object containing predicted labels of images
+    :return: null
     """
+
     matchlabeled = (test_labels == pred_labels)
     mislabeled_indices = np.where(matchlabeled == 0)
     mislabeled_images = test_images[mislabeled_indices]

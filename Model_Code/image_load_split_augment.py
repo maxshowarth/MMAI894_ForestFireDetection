@@ -17,6 +17,7 @@ BUCKET_NAME = "citric-inkwell-268501"
 def resize_and_shuffle(image_directory, label=0):
     """
     Collects, labels, resizes and shuffles images.
+
     :param image_directory: Path to image directory
     :param label: Label for image class
     :return: List of image-label objects
@@ -65,6 +66,7 @@ def split_and_scale(data, test_size=0.2):
 def augment_images(augmentation_generator, data):
     """
     Augments images files.
+
     :param augmentation_generator: Augmentor Object
     :param data: list of image-like objects to be augmented
     :return: list of image-like objects
@@ -82,6 +84,7 @@ def augment_images(augmentation_generator, data):
 def augment_and_upload(augmentation_generator, data, train_x, train_y):
     """
     Augment images and upload to cloud storage bucket.
+
     :param augmentation_generator: Generator Object
     :param data: data to be augmented
     :param train_x: training data to append augmentation to
@@ -121,6 +124,7 @@ def augment_and_upload(augmentation_generator, data, train_x, train_y):
 def load_fire_dataset():
     """
     Loads dataset from cloud or local storage to memory
+
     :return: null
     """
 
@@ -229,7 +233,8 @@ def load_fire_dataset():
 def load_augmented_dataset():
     """
     Loads a pre-split, pre-scaled dataset from cloud to memory
-    :return:
+
+    :return: training sets defaultdict object
     """
 
     # Check for existance of local model_cache and create if it does not exist

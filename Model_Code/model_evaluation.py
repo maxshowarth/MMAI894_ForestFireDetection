@@ -17,7 +17,8 @@ bucket_files = [blob.name for blob in storage_client.list_blobs(BUCKET_NAME)]
 
 def load_test_dataset():
     """
-    Loads testing dataset from cloud storage
+    Loads testing dataset from cloud storage.
+
     :return: test_x, test_y
     """
 
@@ -48,7 +49,8 @@ def load_test_dataset():
 
 def load_saved_models():
     """
-    Loads saved models (hd5) from cloud storage
+    Loads saved models (hd5) from cloud storage.
+
     :return: saved models
     """
 
@@ -78,6 +80,7 @@ def load_saved_models():
 def prediction():
     """
     Makes predictions and uploads results to cloud storage
+
     :return: null
     """
 
