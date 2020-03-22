@@ -7,7 +7,6 @@ from keras.models import load_model
 from blob_utils import *
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./GCP Playground-34c3d1faef3b.json"
-storage_client = storage.Client()
 
 BUCKET_NAME = "citric-inkwell-268501"
 
