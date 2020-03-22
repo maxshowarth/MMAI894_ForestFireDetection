@@ -7,8 +7,11 @@ from keras.models import load_model
 from blob_utils import *
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./GCP Playground-34c3d1faef3b.json"
-
 BUCKET_NAME = "citric-inkwell-268501"
+
+# Open gs Client
+storage_client = storage.Client()
+bucket_files = [blob.name for blob in storage_client.list_blobs(BUCKET_NAME)]
 
 
 def load_test_dataset():
@@ -25,7 +28,7 @@ def load_test_dataset():
         print("Created Test Data")
 
     test_sets = defaultdict(list)
-    for filename in list_blobs(BUCKET_NAME):
+    for filename in bucket_files:
         if "test_set" in filename:
             test_sets[filename.split("/")[1]].append(filename.replace("/", "-"))
             if os.path.exists(os.path.join("./model_cache/test_data", str(filename.replace("/", "-")))):
@@ -56,7 +59,7 @@ def load_saved_models():
         print("Created saved models")
 
     saved_models = defaultdict(list)
-    for filename in list_blobs(BUCKET_NAME):
+    for filename in bucket_files:
         if "saved_models" in filename:
             saved_models[filename.split("/")[1]].append(filename.replace("/", "-"))
             if os.path.exists(os.path.join("./model_cache/saved_models", str(filename.replace("/", "-")))):
