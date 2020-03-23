@@ -3,7 +3,7 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import load_model
-import efficientnet.tfkeras
+# import efficientnet.tfkeras
 
 from blob_utils import *
 
@@ -77,23 +77,26 @@ def load_saved_models():
     return saved_models
 
 
-def prediction():
+def prediction(models_to_evaluate=None):
     """
     Makes predictions and uploads results to cloud storage
 
     :return: null
     """
+    test_x, test_y = load_test_dataset()
+    saved_models = load_saved_models()
+
+    if models_to_evaluate is None:
+        models_to_evaluate = [i for i in saved_models.values()]
 
     if os.path.isdir('./model_cache/preds'):
         print("folder Exists")
     else:
         os.makedirs("./model_cache/preds")
 
-    test_x, test_y = load_test_dataset()
-    saved_models = load_saved_models()
 
     # Evaluate all models on the testset and upload the predictions
-    for saved_model in saved_models.values():
+    for saved_model in models_to_evaluate:
         model = load_model(os.path.join("./model_cache/saved_models", saved_model[0]))
 
         test_predictions = model.predict(test_x)
