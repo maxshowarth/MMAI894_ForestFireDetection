@@ -3,7 +3,7 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import load_model
-# import efficientnet.tfkeras
+import efficientnet.tfkeras
 
 from blob_utils import *
 

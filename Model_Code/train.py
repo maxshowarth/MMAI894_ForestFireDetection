@@ -10,17 +10,19 @@ from model_build import build_vgg_trainable, build_mobilenetv2, build_nasnet, bu
 BUCKET_NAME = "citric-inkwell-268501"
 
 
-def train_vgg16():
+def train_vgg16(nameOverride = None, layers_to_train = None):
     """
     Build, train and save VGG16 model with block4 and block5 fine-tuning.
     :return: null
     """
 
+    if nameOverride is None:
+        nameOverride = "block4and5"
     # load data
     training_sets = load_augmented_dataset()
 
     # build models
-    model_vgg = build_vgg_trainable()
+    model_vgg = build_vgg_trainable(fine_tune = layers_to_train)
 
     baseWeights_t = model_vgg.get_weights()
 
@@ -37,15 +39,15 @@ def train_vgg16():
                                 callbacks=[early_stopping_monitor])
 
         mpu.plot_accuracy_loss(history,
-                               "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)))
+                               "./model_cache/train_data/{}_{}_vgg16_plots.png".format(str(training_set), nameOverride))
 
-        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_block4and5_vgg16_plots.png".format(str(training_set)),
-                    "model_charts/{}_block4and5_vgg16_plots.png".format(str(training_set)))
+        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_{}_vgg16_plots.png".format(str(training_set), nameOverride),
+                    "model_charts/{}_{}_vgg16_plots.png".format(str(training_set), nameOverride))
 
-        model_vgg.save("./model_cache/train_data/{}_block4and5_vgg16.h5".format(str(training_set)))
+        model_vgg.save("./model_cache/train_data/{}_{}_vgg16.h5".format(str(training_set), nameOverride))
 
-        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_block4and5_vgg16.h5".format(str(training_set)),
-                    "saved_models/{}_block4and5_vgg16.h5".format(str(training_set)))
+        upload_blob(BUCKET_NAME, "./model_cache/train_data/{}_{}_vgg16.h5".format(str(training_set), nameOverride),
+                    "saved_models/{}_{}_vgg16.h5".format(str(training_set), nameOverride))
 
 
 def train_mobilenetv2():
