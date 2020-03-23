@@ -88,6 +88,8 @@ def prediction(models_to_evaluate=None):
 
     if models_to_evaluate is None:
         models_to_evaluate = [i for i in saved_models.values()]
+    else:
+        models_to_evaluate = [i for i in models_to_evaluate]
 
     if os.path.isdir('./model_cache/preds'):
         print("folder Exists")
@@ -97,7 +99,7 @@ def prediction(models_to_evaluate=None):
 
     # Evaluate all models on the testset and upload the predictions
     for saved_model in models_to_evaluate:
-        model = load_model(os.path.join("./model_cache/saved_models", saved_model[0]))
+        model = load_model(os.path.join("./model_cache/saved_models", saved_model))
 
         test_predictions = model.predict(test_x)
 
