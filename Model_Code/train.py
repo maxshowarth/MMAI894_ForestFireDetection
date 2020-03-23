@@ -1,6 +1,5 @@
 import numpy as np
 from keras.callbacks import EarlyStopping
-
 import model_plot_utils as mpu
 from blob_utils import *
 from image_load_split_augment import load_augmented_dataset

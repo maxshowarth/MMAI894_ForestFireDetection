@@ -18,14 +18,14 @@ retrainingConfigurations = [["allBlock5", ['block5_conv1', 'block5_conv2', 'bloc
                             ["allBlocks_conv123", ['block5_conv1', 'block5_conv2', 'block5_conv3','block4_conv1', 'block4_conv2', 'block3_conv3', 'block3_conv1', 'block3_conv2', 'block3_conv3', 'block2_conv1', 'block2_conv2', 'block2_conv3', 'block1_conv1', 'block1_conv2', 'block1_conv3']]
                             ]
 
-for retrainingConfiguration in retrainingConfigurations:
-    nameOverride = "vgg16_experiments_{}".format(str(retrainingConfiguration[0]))
-    train_vgg16(nameOverride = nameOverride,layers_to_train = retrainingConfiguration[1])
+# for retrainingConfiguration in retrainingConfigurations:
+#     nameOverride = "vgg16_experiments_{}".format(str(retrainingConfiguration[0]))
+#     train_vgg16(nameOverride = nameOverride,layers_to_train = retrainingConfiguration[1])
 
 savedModels = load_saved_models()
 modelsToEvaluate = []
 for model in savedModels.values():
-    if "vgg16_experiments" in model:
-        modelsToEvaluate.append(model)
+    if "vgg16_experiments" in model[0]:
+        modelsToEvaluate.append(model[0])
 
-prediction(modelsToEvaluate)
+prediction(models_to_evaluate = modelsToEvaluate)

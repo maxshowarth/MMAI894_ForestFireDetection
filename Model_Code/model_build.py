@@ -2,6 +2,7 @@
 import efficientnet.keras as efn
 import keras
 from keras import optimizers
+# from keras.applications import vgg16
 from keras.applications import mobilenet_v2, nasnet, vgg16, resnet_v2
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Dropout, Dense, Input, GlobalAveragePooling2D, GlobalMaxPooling2D, Concatenate, Flatten
