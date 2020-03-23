@@ -106,8 +106,7 @@ def prediction(models_to_evaluate=None):
         preds = pd.DataFrame({'true': test_y, 'pred': np.ravel(test_predictions)})
 
         preds.to_csv("./model_cache/preds/{}_pred.csv".format(str(saved_model)[13:-3]))
-        upload_blob(BUCKET_NAME, "./model_cache/preds/{}_pred.csv".format(str(saved_model[13:-3]))),
-                    "models_predictions/{}_pred.csv".format(str(saved_model[13:-3])))
+        upload_blob(BUCKET_NAME, "./model_cache/preds/{}_pred.csv".format(str(saved_model[13:-3])), "models_predictions/{}_pred.csv".format(str(saved_model[13:-3])))
 
 
 if __name__ == '__main__':
