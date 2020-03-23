@@ -32,6 +32,7 @@ def thresholdModelStats(results, threshold):
                 FN +=1
             if item['rounded_value'].astype('int') == 1:
                 TP +=1
+    # Calculate metrics NOTE: Add extra calulcations here. Be sure to add a space in the return function, and include a placeholder for the "Best Metric" stat if you are including it.
     P = divisionCatcher(TP,(TP+FP))
     R = TP/(TP+FN)
     I = R + (TN/(TN+FP)) - 1
@@ -54,14 +55,17 @@ for experiment in experiments:
                 result = thresholdModelStats(data, threhold)
                 result.insert(0,file)
                 prelim_results.append(result)
+            # Gather metrics from each threshold
             prec = [i[6] for i in prelim_results]
             rec = [i[7] for i in prelim_results]
             inf = [i[8] for i in prelim_results]
             fnrs = [i[9] for i in prelim_results]
+            # Determine best metric
             best_prec = max(prec)
             best_rec = max(rec)
             best_inf = max(inf)
             best_fnr = min(fnrs)
+            # Mark which thresholds are the best based on each metric
             for i in range(len(prelim_results)):
                 row = prelim_results[i]
                 if row[6] >= best_prec:
@@ -76,7 +80,7 @@ for experiment in experiments:
                 # prelim_results[best_rec][10] == 1
                 # prelim_results[best_inf][11] ==1
             results.extend(prelim_results)
-
+    # NOTE: Make sure to include any new metrics or best values in the columns list
     results_df = pd.DataFrame(results,columns = ["model", "threshold", "TP", "TN", "FP", "FN", "Precision", "Recall", "Informedness", "False Negative Rate","Best Precision", "Best Recall", "Best Informedness", "Best False Negative Rate"])
     results_df.to_csv("/Users/max/Documents/MMAI/MMAI 894 - Deep Learning/Final Project/prediction results/experiment_{}_results.csv".format(str(experiment)))
 
